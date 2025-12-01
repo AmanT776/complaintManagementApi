@@ -32,6 +32,9 @@ public class User {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    @OneToMany
+    @JoinColumn(name = "user_id",nullable = true)
+    public List<Compliant> compliants = new ArrayList<>();
     public User(String first_name, String last_name, String email, String password) {
         this.first_name = first_name;
         this.last_name = last_name;
