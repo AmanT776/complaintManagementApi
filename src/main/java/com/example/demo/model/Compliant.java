@@ -20,8 +20,8 @@ public class Compliant {
     private String title;
     @Column(nullable = false)
     private String description;
-    @Column(columnDefinition = "default null")
-    private boolean is_anonymous;
+    @Column(nullable = true)
+    private Boolean is_anonymous;
     public enum Status{
         PENDING,
         RECEIVED,
@@ -31,7 +31,5 @@ public class Compliant {
     }
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
-
-
 
 }
