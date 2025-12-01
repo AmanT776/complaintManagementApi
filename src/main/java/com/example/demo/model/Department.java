@@ -30,4 +30,7 @@ public class Department {
     @OneToMany
     @JoinColumn(name = "department_id")
     private List<User> users = new ArrayList<>();
+    @OneToMany
+    @JoinColumn(name = "department_id")
+    private List<Compliant> compliants = new ArrayList<>();
 }
