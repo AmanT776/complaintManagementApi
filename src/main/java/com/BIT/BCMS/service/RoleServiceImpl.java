@@ -8,10 +8,12 @@ import com.BIT.BCMS.mapper.RoleMapper;
 import com.BIT.BCMS.repository.RoleRepository;
 import com.BIT.BCMS.repository.UserRepository;
 import com.BIT.BCMS.service.RoleService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -26,6 +28,19 @@ public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final RoleMapper roleMapper;
+// since I used dataseeder to implement the roles i dont need this default roles so I commented it out but i kept it just to remember the old codes :)//  @PostConstruct
+//    @Transactional
+//    public void initializeCoreRoles() {
+//        List<String> coreRoles = Arrays.asList("ADMIN", "COMP_OFFICER", "USERS");
+//
+//        for (String roleName : coreRoles) {
+//            if (!roleRepository.existsByName(roleName)) {
+//                Role newRole = Role.builder().name(roleName).build();
+//                roleRepository.save(newRole);
+//                System.out.println("Seeded required role: " + roleName);
+//            }
+//        }
+//    }
 
     @Override
     @Transactional(readOnly = true)
@@ -87,7 +102,7 @@ public class RoleServiceImpl implements RoleService {
             throw new ResourceNotFoundException("Role not found with id: " + id);
         }
         // Prevent deleting roles that are in use by users
-        if (userRepository.existsByRoles_Id(id)) {
+        if (userRepository.existsByRole_Id(id)) {
             throw new IllegalStateException("Cannot delete role with id " + id + " — users are assigned to it");
         }
         roleRepository.deleteById(id);

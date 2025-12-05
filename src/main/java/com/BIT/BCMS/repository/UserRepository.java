@@ -8,10 +8,9 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<Users, Long> {
-    // Derived query to find a user by email (for login)
+    Users findByUsername(String username);
     Optional<Users> findByEmail(String email);
-
-    boolean existsByRoles_Id(Long id);
-
+    boolean existsByRole_Id(Long id);
     boolean existsByDepartmentId(Long id);
 }
+

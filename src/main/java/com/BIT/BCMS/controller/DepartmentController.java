@@ -5,6 +5,7 @@ import com.BIT.BCMS.service.DepartmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -15,13 +16,14 @@ import java.util.List;
  * Department controller — DTO-based endpoints only.
  */
 @RestController
-@RequestMapping("/api/departments")
+@RequestMapping("/api/org/departments")
+@PreAuthorize("hasAuthority('DEPARTMENT_MANAGE')")
 @RequiredArgsConstructor
 public class DepartmentController {
 
     private final DepartmentService departmentService;
 
-    @PostMapping
+    @PostMapping("create")
     public ResponseEntity<DepartmentDTO> create(@Valid @RequestBody DepartmentDTO dto) {
         DepartmentDTO created = departmentService.create(dto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")

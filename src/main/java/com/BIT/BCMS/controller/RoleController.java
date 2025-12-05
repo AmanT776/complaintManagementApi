@@ -5,6 +5,7 @@ import com.BIT.BCMS.service.RoleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -15,6 +16,7 @@ import java.util.List;
  * Role REST controller. Returns DTOs and uses HTTP status codes properly.
  */
 @RestController
+@PreAuthorize("hasAuthority('ROLE_MANAGE')")
 @RequestMapping("/api/roles")
 @RequiredArgsConstructor
 public class RoleController {

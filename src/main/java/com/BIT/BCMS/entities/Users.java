@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -44,7 +45,11 @@ public class Users {
     @Column(nullable = true, length = 120, unique = true)
     private String email;
 
-    @Column(nullable = true, length = 20)
+    @Column(nullable = true,name = "PHONE_NUMBER")
+    @Pattern(
+            regexp = "^\\+251\\d{9}$",
+            message = "Invalid phone number. Must start with +251 followed by 9 digits."
+    )
     private String phone;
 
     // Many users belong to one department
@@ -59,15 +64,11 @@ public class Users {
     @JsonBackReference("user-complaints")
     private List<Complaint> complaints = new ArrayList<>();
 
-    // Roles (many-to-many)
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id")}
-    )
-    @Builder.Default
-    private Set<Role> roles = new HashSet<>();
+
+    // A User has only ONE Role. This creates the foreign key (role_id) in the 'users' table.
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role; // Must be a single object, not a Set
 
     // timestamps
     @Temporal(TemporalType.TIMESTAMP)
@@ -87,4 +88,17 @@ public class Users {
     protected void onUpdate() {
         updatedAt = new Date();
     }
+
+    @Override
+    public String toString() {
+        return "Users{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                '}';
+    }
+
+
 }
