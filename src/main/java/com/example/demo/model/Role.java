@@ -12,10 +12,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
