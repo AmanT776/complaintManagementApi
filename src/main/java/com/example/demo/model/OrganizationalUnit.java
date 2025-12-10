@@ -19,7 +19,8 @@ public class OrganizationalUnit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-    @Column(name="parent_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="parent_id")
     private OrganizationalUnit parent;
     @ManyToOne
     @JoinColumn(name = "unit_type_id",nullable = false)
