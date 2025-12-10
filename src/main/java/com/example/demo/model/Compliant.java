@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.example.demo.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,15 +26,11 @@ public class Compliant {
     private String description;
     @Column(nullable = true)
     private Boolean is_anonymous;
-    public enum Status{
-        PENDING,
-        RECEIVED,
-        UNDER_REVIEW,
-        RESOLVED,
-        CLOSED
-    }
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
+    @ManyToOne
+    @JoinColumn(name = "organizational_unit_id")
+    private OrganizationalUnit organizationalUnit;
     @OneToMany
     @JoinColumn(name = "compliant_id")
     private List<Files> files = new ArrayList<>();
