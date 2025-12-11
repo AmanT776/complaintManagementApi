@@ -22,7 +22,7 @@ public class OrganizationalUnit {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="parent_id")
     private OrganizationalUnit parent;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "unit_type_id",nullable = false)
     private OrganizationalUnitType unitType;
     @CreationTimestamp

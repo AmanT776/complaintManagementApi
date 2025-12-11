@@ -1,11 +1,17 @@
 package com.example.demo.model;
 
 import com.example.demo.enums.Status;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,9 +37,18 @@ public class Compliant {
     @JoinColumn(name = "organizational_unit_id")
     private OrganizationalUnit organizationalUnit;
     @ManyToOne
-    @JoinColumn(name="category_id")
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    @JsonBackReference
     private Category category;
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "compliant_id")
     private List<Files> files = new ArrayList<>();
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }

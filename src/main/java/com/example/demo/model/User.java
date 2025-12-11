@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,15 +34,9 @@ public class User {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id",nullable = true)
     public List<Compliant> compliants = new ArrayList<>();
-    public User(String first_name, String last_name, String email, String password) {
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.email = email;
-        this.password = password;
-    }
 
 
 }

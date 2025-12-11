@@ -8,10 +8,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompliantRequest {
+public class CreateRequest {
     private String title;
     private String description;
     private Boolean isAnonymous;
     private int organizationalUnitId;
     private int categoryId;
+    private int userId;
 }
