@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class CompliantRequest {
     private String title;
     private String description;
-    private Boolean is_anonymous;
-    private int organizational_unit_id;
+    private Boolean isAnonymous;
+    private int organizationalUnitId;
+    private int categoryId;
 }
