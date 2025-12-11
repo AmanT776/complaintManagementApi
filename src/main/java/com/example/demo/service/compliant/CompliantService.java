@@ -13,6 +13,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class CompliantService implements ICompliantService {
 
@@ -32,6 +34,8 @@ public class CompliantService implements ICompliantService {
       compliant.setOrganizationalUnit(organizationalUnit);
       Category category = categoryRepository.findById(compliantRequest.getCategoryId()).orElseThrow(()->new RuntimeException("category not found"));
       compliant.setCategory(category);
+      UUID reference_number = UUID.randomUUID();
+      compliant.setReferenceNumber(reference_number.toString());
       compliantRepository.save(compliant);
     }
 }
