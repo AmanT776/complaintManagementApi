@@ -1,4 +1,6 @@
 package com.example.demo.model;
+
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,25 +9,24 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Category {
+@NoArgsConstructor
+public class OrganizationalUnit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(nullable = false,length = 30)
     private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="parent_id")
+    private OrganizationalUnit parent;
+    @ManyToOne
+    @JoinColumn(name = "unit_type_id",nullable = false)
+    private OrganizationalUnitType unitType;
     @CreationTimestamp
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-    @OneToMany
-    @JoinColumn(name = "category_id")
-    private List<Compliant> compliants = new ArrayList<>();
 }
