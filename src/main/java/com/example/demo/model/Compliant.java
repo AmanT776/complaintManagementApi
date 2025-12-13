@@ -44,8 +44,7 @@ public class Compliant {
     @JoinColumn(name = "category_id")
     @JsonBackReference
     private Category category;
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "compliant_id")
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<Files> files = new ArrayList<>();
     @CreationTimestamp
     private LocalDateTime createdAt;
