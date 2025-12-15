@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 public class OrganizationalUnitType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     private String name;
     @CreationTimestamp
     private LocalDateTime createdAt;

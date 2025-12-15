@@ -13,7 +13,7 @@ import java.util.Collections;
 @Data
 @AllArgsConstructor
 public class UserPrincipal implements UserDetails {
-    private Integer id;
+    private Long id;
     private String firstName;
     private String lastName;
     private String email;

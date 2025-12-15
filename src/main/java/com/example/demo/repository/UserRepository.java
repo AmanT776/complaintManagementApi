@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
@@ -28,7 +28,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findByRoleNameAndIsActive(@Param("roleName") String roleName, @Param("isActive") Boolean isActive);
 
     @Query("SELECT u FROM User u WHERE u.organizationalUnit.id = :unitId")
-    List<User> findByOrganizationalUnitId(@Param("unitId") Integer unitId);
+    List<User> findByOrganizationalUnitId(@Param("unitId") Long unitId);
 
     @Query("SELECT u FROM User u WHERE " +
             "(:search IS NULL OR LOWER(u.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +

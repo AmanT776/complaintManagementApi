@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.*;
+import com.example.demo.dto.RegisterDto;
 import com.example.demo.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,14 +11,17 @@ import java.util.Optional;
 
 public interface UserService {
 
-    // Basic CRUD operations
+    // Registration (public - assigns USER role automatically)
+    UserDto registerUser(RegisterDto registerDto);
+
+    // Basic CRUD operations (admin only - allows role assignment)
     UserDto createUser(CreateUserDto createUserDto);
 
-    UserDto updateUser(Integer id, UpdateUserDto updateUserDto);
+    UserDto updateUser(Long id, UpdateUserDto updateUserDto);
 
-    void deleteUser(Integer id);
+    void deleteUser(Long id);
 
-    Optional<UserDto> getUserById(Integer id);
+    Optional<UserDto> getUserById(Long id);
 
     Optional<UserDto> getUserByEmail(String email);
 
@@ -39,21 +43,21 @@ public interface UserService {
     List<UserDto> getAllRegularUsers();
 
     // Organizational unit queries
-    List<UserDto> getUsersByOrganizationalUnit(Integer unitId);
+    List<UserDto> getUsersByOrganizationalUnit(Long unitId);
 
     // User status management
-    UserDto activateUser(Integer id);
+    UserDto activateUser(Long id);
 
-    UserDto deactivateUser(Integer id);
+    UserDto deactivateUser(Long id);
 
     List<UserDto> getActiveUsers();
 
     List<UserDto> getInactiveUsers();
 
     // Password management
-    void changePassword(Integer userId, ChangePasswordDto changePasswordDto);
+    void changePassword(Long userId, ChangePasswordDto changePasswordDto);
 
-    void resetPassword(Integer userId, String newPassword);
+    void resetPassword(Long userId, String newPassword);
 
     // Validation methods
     boolean existsByEmail(String email);

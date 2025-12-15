@@ -21,7 +21,7 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
     private final OrganizationalUnitTypeRepository organizationalUnitTypeRepository;
 
     @Override
-    public OrganizationalUnit createOrganizationalUnit(String name, Integer parentId, Integer unitTypeId) {
+    public OrganizationalUnit createOrganizationalUnit(String name, Long parentId, Long unitTypeId) {
         if (existsByName(name)) {
             throw new RuntimeException("Organizational unit already exists with name: " + name);
         }
@@ -44,7 +44,7 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<OrganizationalUnit> findById(Integer id) {
+    public Optional<OrganizationalUnit> findById(Long id) {
         return organizationalUnitRepository.findById(id);
     }
 
@@ -62,18 +62,18 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrganizationalUnit> findByParentId(Integer parentId) {
+    public List<OrganizationalUnit> findByParentId(Long parentId) {
         return organizationalUnitRepository.findByParentId(parentId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrganizationalUnit> findByUnitTypeId(Integer unitTypeId) {
+    public List<OrganizationalUnit> findByUnitTypeId(Long unitTypeId) {
         return organizationalUnitRepository.findByUnitTypeId(unitTypeId);
     }
 
     @Override
-    public OrganizationalUnit updateOrganizationalUnit(Integer id, String name, Integer parentId, Integer unitTypeId) {
+    public OrganizationalUnit updateOrganizationalUnit(Long id, String name, Long parentId, Long unitTypeId) {
         OrganizationalUnit unit = organizationalUnitRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Organizational unit not found with id: " + id));
 
@@ -99,7 +99,7 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
     }
 
     @Override
-    public void deleteOrganizationalUnit(Integer id) {
+    public void deleteOrganizationalUnit(Long id) {
         if (!organizationalUnitRepository.existsById(id)) {
             throw new RuntimeException("Organizational unit not found with id: " + id);
         }

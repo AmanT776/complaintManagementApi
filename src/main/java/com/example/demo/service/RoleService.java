@@ -9,15 +9,15 @@ public interface RoleService {
 
     Role createRole(String name, String description);
 
-    Optional<Role> findById(Integer id);
+    Optional<Role> findById(Long id);
 
     Optional<Role> findByName(String name);
 
     List<Role> findAll();
 
-    Role updateRole(Integer id, String name, String description);
+    Role updateRole(Long id, String name, String description);
 
-    void deleteRole(Integer id);
+    void deleteRole(Long id);
 
     boolean existsByName(String name);
 }

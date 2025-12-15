@@ -3,6 +3,7 @@ package com.example.demo.service.impl;
 import com.example.demo.dto.AuthResponseDto;
 import com.example.demo.dto.CreateUserDto;
 import com.example.demo.dto.LoginDto;
+import com.example.demo.dto.RegisterDto;
 import com.example.demo.dto.UserDto;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
@@ -58,9 +59,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserDto register(CreateUserDto createUserDto) {
-        // For registration, we'll use the existing user service
-        return userService.createUser(createUserDto);
+    public UserDto register(RegisterDto registerDto) {
+        // Public registration always assigns "USER" role
+        return userService.registerUser(registerDto);
     }
 
     @Override

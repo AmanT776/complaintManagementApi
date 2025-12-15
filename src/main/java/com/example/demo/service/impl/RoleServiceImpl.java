@@ -29,7 +29,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Role> findById(Integer id) {
+    public Optional<Role> findById(Long id) {
         return roleRepository.findById(id);
     }
 
@@ -46,7 +46,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Role updateRole(Integer id, String name, String description) {
+    public Role updateRole(Long id, String name, String description) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
 
@@ -60,7 +60,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void deleteRole(Integer id) {
+    public void deleteRole(Long id) {
         if (!roleRepository.existsById(id)) {
             throw new RuntimeException("Role not found with id: " + id);
         }

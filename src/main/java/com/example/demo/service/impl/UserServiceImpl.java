@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.*;
+import com.example.demo.dto.RegisterDto;
 import com.example.demo.model.OrganizationalUnit;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
@@ -30,6 +31,38 @@ public class UserServiceImpl implements UserService {
     private final OrganizationalUnitService organizationalUnitService;
 
     @Override
+    public UserDto registerUser(RegisterDto registerDto) {
+        // Validate email uniqueness
+        if (existsByEmail(registerDto.getEmail())) {
+            throw new RuntimeException("Email already exists: " + registerDto.getEmail());
+        }
+
+        // Validate student ID uniqueness if provided
+        if (registerDto.getStudentId() != null && existsByStudentId(registerDto.getStudentId())) {
+            throw new RuntimeException("Student ID already exists: " + registerDto.getStudentId());
+        }
+
+        // Get default USER role
+        Role userRole = roleService.findByName("USER")
+                .orElseThrow(() -> new RuntimeException("Default USER role not found. Please contact administrator."));
+
+        // Create user with default USER role
+        User user = new User();
+        user.setFirstName(registerDto.getFirstName());
+        user.setLastName(registerDto.getLastName());
+        user.setEmail(registerDto.getEmail());
+        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        user.setPhoneNumber(registerDto.getPhoneNumber());
+        user.setStudentId(registerDto.getStudentId());
+        user.setIsActive(true);
+        user.setRole(userRole); // Always assign USER role for public registration
+        // organizationalUnit remains null for regular users
+
+        User savedUser = userRepository.save(user);
+        return convertToDto(savedUser);
+    }
+
+    @Override
     public UserDto createUser(CreateUserDto createUserDto) {
         // Validate email uniqueness
         if (existsByEmail(createUserDto.getEmail())) {
@@ -49,7 +82,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(Integer id, UpdateUserDto updateUserDto) {
+    public UserDto updateUser(Long id, UpdateUserDto updateUserDto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
@@ -94,7 +127,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Integer id) {
+    public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
             throw new RuntimeException("User not found with id: " + id);
         }
@@ -103,7 +136,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<UserDto> getUserById(Integer id) {
+    public Optional<UserDto> getUserById(Long id) {
         return userRepository.findById(id).map(this::convertToDto);
     }
 
@@ -175,14 +208,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDto> getUsersByOrganizationalUnit(Integer unitId) {
+    public List<UserDto> getUsersByOrganizationalUnit(Long unitId) {
         return userRepository.findByOrganizationalUnitId(unitId).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public UserDto activateUser(Integer id) {
+    public UserDto activateUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         user.setIsActive(true);
@@ -191,7 +224,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto deactivateUser(Integer id) {
+    public UserDto deactivateUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         user.setIsActive(false);
@@ -216,7 +249,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(Integer userId, ChangePasswordDto changePasswordDto) {
+    public void changePassword(Long userId, ChangePasswordDto changePasswordDto) {
         if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getConfirmPassword())) {
             throw new RuntimeException("New password and confirm password do not match");
         }
@@ -233,7 +266,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void resetPassword(Integer userId, String newPassword) {
+    public void resetPassword(Long userId, String newPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 

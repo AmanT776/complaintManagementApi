@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Unnamed" type="Application" factoryName="Application" nameIsGenerated="true">
+    <envs>
+      <env name="DB_HOST" value="localhost" />
+      <env name="DB_NAME" value="compliant" />
+      <env name="DB_PASSWORD" value="root" />
+      <env name="DB_PORT" value="3306" />
+      <env name="DB_USER" value="root" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.example.demo.ComplaintManagementApplication" />
+    <module name="complaintManagement" />
+    <option name="PROGRAM_PARAMETERS" value="$MAVEN_REPOSITORY$" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
