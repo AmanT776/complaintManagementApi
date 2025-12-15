@@ -35,15 +35,42 @@ public class CompliantService implements ICompliantService {
       Compliant compliant = compliantMapper.mapCompliantRequestToCompliant(createRequest);
       // Clear any files that might have been incorrectly mapped by the mapper
       compliant.setFiles(new ArrayList<>());
-      
+
       OrganizationalUnit organizationalUnit = organizationalUnitRepository.findById(createRequest.getOrganizationalUnitId()).orElseThrow(()->new RuntimeException("organizational unit not found"));
       compliant.setOrganizationalUnit(organizationalUnit);
       Category category = categoryRepository.findById(createRequest.getCategoryId()).orElseThrow(()->new RuntimeException("category not found"));
       compliant.setCategory(category);
-      User user = userRepository.findById(createRequest.getUserId()).orElseThrow(()->new RuntimeException("user not found"));
-      compliant.setUser(user);
-      UUID reference_number = UUID.randomUUID();
-      compliant.setReferenceNumber(reference_number.toString());
+
+      // Handle anonymity and user requirement
+      Boolean isAnonymous = createRequest.getIsAnonymous();
+      Integer userId = createRequest.getUserId();
+
+      // Validation rules:
+      // - If isAnonymous is true, userId must be null.
+      // - If isAnonymous is false, userId is required.
+      if (Boolean.TRUE.equals(isAnonymous) && userId != null) {
+          throw new RuntimeException("userId must be null when isAnonymous is true");
+      }
+      if (Boolean.FALSE.equals(isAnonymous)) {
+          if (userId == null) {
+              throw new RuntimeException("userId is required when isAnonymous is false");
+          }
+          User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("user not found"));
+          compliant.setUser(user);
+          compliant.setIsAnonymous(false);
+      } else {
+          // If anonymous or not provided, force anonymous and clear user
+          compliant.setIsAnonymous(true);
+          compliant.setUser(null);
+      }
+
+      // Reference number: only generate when anonymous; otherwise leave null
+      if (Boolean.TRUE.equals(compliant.getIsAnonymous())) {
+          UUID reference_number = UUID.randomUUID();
+          compliant.setReferenceNumber(reference_number.toString());
+      } else {
+          compliant.setReferenceNumber(null);
+      }
       final Compliant createdCompliant = compliantRepository.save(compliant);
       
       // Process files if provided
@@ -79,6 +106,19 @@ public class CompliantService implements ICompliantService {
     public Compliant getCompliantById(int id) {
         return compliantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Complaint not found with id: " + id));
+    }
+
+    public Compliant getCompliantByReference(String referenceNumber) {
+        return compliantRepository.findByReferenceNumber(referenceNumber)
+                .orElseThrow(() -> new RuntimeException("Complaint not found with reference: " + referenceNumber));
+    }
+
+
+    public Compliant updateStatus(int id, com.example.demo.enums.Status status) {
+        Compliant compliant = compliantRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Complaint not found with id: " + id));
+        compliant.setStatus(status);
+        return compliantRepository.save(compliant);
     }
 
     public Compliant updateCompliant(int id, UpdateRequest updateRequest) {

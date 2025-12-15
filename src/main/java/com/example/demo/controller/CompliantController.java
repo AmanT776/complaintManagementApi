@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.ApiResponse;
 import com.example.demo.dto.compliant.CreateRequest;
 import com.example.demo.dto.compliant.UpdateRequest;
+import com.example.demo.dto.compliant.UpdateStatusRequest;
 import com.example.demo.model.Compliant;
 import com.example.demo.service.compliant.CompliantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +36,22 @@ public class CompliantController {
         return new ApiResponse<>(true, "Complaint retrieved successfully", compliant);
     }
 
+    @GetMapping("/reference/{referenceNumber}")
+    public ApiResponse<Compliant> getCompliantByReference(@PathVariable String referenceNumber){
+        Compliant compliant = compliantService.getCompliantByReference(referenceNumber);
+        return new ApiResponse<>(true, "Complaint retrieved successfully", compliant);
+    }
+
     @PutMapping("/{id}")
     public ApiResponse<Compliant> updateCompliant(@PathVariable int id, @ModelAttribute UpdateRequest updateRequest){
         Compliant updatedCompliant = compliantService.updateCompliant(id, updateRequest);
         return new ApiResponse<>(true, "Complaint updated successfully", updatedCompliant);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ApiResponse<Compliant> updateStatus(@PathVariable int id, @RequestBody UpdateStatusRequest request){
+        Compliant updated = compliantService.updateStatus(id, request.getStatus());
+        return new ApiResponse<>(true, "Complaint status updated successfully", updated);
     }
 
     @DeleteMapping("/{id}")
