@@ -1,9 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ApiResponse;
+import com.example.demo.dto.compliant.CompliantResponse;
 import com.example.demo.dto.compliant.CreateRequest;
 import com.example.demo.dto.compliant.UpdateRequest;
 import com.example.demo.dto.compliant.UpdateStatusRequest;
+import com.example.demo.mapper.CompliantMapper;
 import com.example.demo.model.Compliant;
 import com.example.demo.service.compliant.CompliantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,40 +20,49 @@ public class CompliantController {
     @Autowired
     private CompliantService compliantService;
 
+    @Autowired
+    private CompliantMapper compliantMapper;
+
     @PostMapping("/")
-    public ApiResponse<Compliant> createCompliant(@ModelAttribute CreateRequest createRequest){
+    public ApiResponse<CompliantResponse> createCompliant(@ModelAttribute CreateRequest createRequest){
          Compliant createdCompliant = compliantService.createCompliant(createRequest);
-         return new ApiResponse<>(true, "Complaint created successfully", createdCompliant);
+         CompliantResponse response = compliantMapper.mapCompliantToCompliantResponse(createdCompliant);
+         return new ApiResponse<>(true, "Complaint created successfully", response);
     }
 
     @GetMapping("/")
-    public ApiResponse<List<Compliant>> getAllComplaints(){
+    public ApiResponse<List<CompliantResponse>> getAllComplaints(){
         List<Compliant> complaints = compliantService.getAllComplaints();
-        return new ApiResponse<>(true, "Complaints retrieved successfully", complaints);
+        List<CompliantResponse> responses = compliantMapper.mapCompliantsToResponses(complaints);
+        return new ApiResponse<>(true, "Complaints retrieved successfully", responses);
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<Compliant> getCompliantById(@PathVariable int id){
+    public ApiResponse<CompliantResponse> getCompliantById(@PathVariable int id){
         Compliant compliant = compliantService.getCompliantById(id);
-        return new ApiResponse<>(true, "Complaint retrieved successfully", compliant);
+        CompliantResponse response = compliantMapper.mapCompliantToCompliantResponse(compliant);
+        return new ApiResponse<>(true, "Complaint retrieved successfully", response);
     }
 
     @GetMapping("/reference/{referenceNumber}")
-    public ApiResponse<Compliant> getCompliantByReference(@PathVariable String referenceNumber){
+    public ApiResponse<CompliantResponse> getCompliantByReference(@PathVariable String referenceNumber){
         Compliant compliant = compliantService.getCompliantByReference(referenceNumber);
-        return new ApiResponse<>(true, "Complaint retrieved successfully", compliant);
+        CompliantResponse response = compliantMapper.mapCompliantToCompliantResponse(compliant);
+        return new ApiResponse<>(true, "Complaint retrieved successfully", response);
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Compliant> updateCompliant(@PathVariable int id, @ModelAttribute UpdateRequest updateRequest){
+    public ApiResponse<CompliantResponse> updateCompliant(@PathVariable int id, @ModelAttribute UpdateRequest updateRequest){
         Compliant updatedCompliant = compliantService.updateCompliant(id, updateRequest);
-        return new ApiResponse<>(true, "Complaint updated successfully", updatedCompliant);
+        CompliantResponse response = compliantMapper.mapCompliantToCompliantResponse(updatedCompliant);
+        return new ApiResponse<>(true, "Complaint updated successfully", response);
     }
 
     @PatchMapping("/{id}/status")
-    public ApiResponse<Compliant> updateStatus(@PathVariable int id, @RequestBody UpdateStatusRequest request){
+    public ApiResponse<CompliantResponse> updateStatus(@PathVariable int id, @RequestBody UpdateStatusRequest request){
         Compliant updated = compliantService.updateStatus(id, request.getStatus());
-        return new ApiResponse<>(true, "Complaint status updated successfully", updated);
+        CompliantResponse response = compliantMapper.mapCompliantToCompliantResponse(updated);
+        return new ApiResponse<>(true, "Complaint status updated successfully", response);
     }
 
     @DeleteMapping("/{id}")

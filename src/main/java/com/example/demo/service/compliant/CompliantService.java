@@ -33,7 +33,6 @@ public class CompliantService implements ICompliantService {
 
    public Compliant createCompliant(CreateRequest createRequest){
       Compliant compliant = compliantMapper.mapCompliantRequestToCompliant(createRequest);
-      // Clear any files that might have been incorrectly mapped by the mapper
       compliant.setFiles(new ArrayList<>());
 
       OrganizationalUnit organizationalUnit = organizationalUnitRepository.findById(createRequest.getOrganizationalUnitId()).orElseThrow(()->new RuntimeException("organizational unit not found"));
@@ -41,13 +40,9 @@ public class CompliantService implements ICompliantService {
       Category category = categoryRepository.findById(createRequest.getCategoryId()).orElseThrow(()->new RuntimeException("category not found"));
       compliant.setCategory(category);
 
-      // Handle anonymity and user requirement
       Boolean isAnonymous = createRequest.getIsAnonymous();
       Integer userId = createRequest.getUserId();
 
-      // Validation rules:
-      // - If isAnonymous is true, userId must be null.
-      // - If isAnonymous is false, userId is required.
       if (Boolean.TRUE.equals(isAnonymous) && userId != null) {
           throw new RuntimeException("userId must be null when isAnonymous is true");
       }
@@ -59,12 +54,9 @@ public class CompliantService implements ICompliantService {
           compliant.setUser(user);
           compliant.setIsAnonymous(false);
       } else {
-          // If anonymous or not provided, force anonymous and clear user
           compliant.setIsAnonymous(true);
           compliant.setUser(null);
       }
-
-      // Reference number: only generate when anonymous; otherwise leave null
       if (Boolean.TRUE.equals(compliant.getIsAnonymous())) {
           UUID reference_number = UUID.randomUUID();
           compliant.setReferenceNumber(reference_number.toString());
@@ -72,8 +64,6 @@ public class CompliantService implements ICompliantService {
           compliant.setReferenceNumber(null);
       }
       final Compliant createdCompliant = compliantRepository.save(compliant);
-      
-      // Process files if provided
       List<MultipartFile> files = createRequest.getFiles();
       if (files != null && !files.isEmpty()) {
           files.forEach(file -> {
@@ -151,7 +141,6 @@ public class CompliantService implements ICompliantService {
             existingCompliant.setUser(user);
         }
 
-        // Process new files if provided
         List<MultipartFile> files = updateRequest.getFiles();
         if (files != null && !files.isEmpty()) {
             final Compliant compliantToUpdate = existingCompliant;
