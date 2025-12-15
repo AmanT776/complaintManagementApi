@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Files {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     @Column(nullable = false,length = 255)
     private String file_path;
     @ManyToOne

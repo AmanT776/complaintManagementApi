@@ -23,7 +23,7 @@ import java.util.List;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     @Column(nullable = false,length = 30)
     private String name;
     @CreationTimestamp

@@ -24,7 +24,7 @@ import java.util.List;
 public class Compliant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     @Column(name = "reference_number", length = 50)
     private String referenceNumber;
     @Column(nullable = false)

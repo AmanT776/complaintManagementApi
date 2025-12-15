@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class OrganizationalUnit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     private String name;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="parent_id")

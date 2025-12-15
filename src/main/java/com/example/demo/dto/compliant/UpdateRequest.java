@@ -14,9 +14,9 @@ public class UpdateRequest {
     private String title;
     private String description;
     private Boolean isAnonymous;
-    private Integer organizationalUnitId;
-    private Integer categoryId;
-    private Integer userId;
+    private Long organizationalUnitId;
+    private Long categoryId;
+    private Long userId;
     private List<MultipartFile> files;
 }
 

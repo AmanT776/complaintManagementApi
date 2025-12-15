@@ -15,9 +15,9 @@ public class CreateRequest {
     private String title;
     private String description;
     private Boolean isAnonymous;
-    private int organizationalUnitId;
-    private int categoryId;
-    private Integer userId;
+    private long organizationalUnitId;
+    private long categoryId;
+    private Long userId;
     private List<MultipartFile> files;
 
     // Allow client to send userId as "null" or empty; convert to null safely
@@ -25,7 +25,7 @@ public class CreateRequest {
         if (userId == null || userId.isBlank() || "null".equalsIgnoreCase(userId.trim())) {
             this.userId = null;
         } else {
-            this.userId = Integer.valueOf(userId);
+            this.userId = Long.valueOf(userId);
         }
     }
 }

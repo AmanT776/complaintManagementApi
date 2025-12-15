@@ -11,15 +11,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompliantResponse {
-    private int id;
+    private long id;
     private String referenceNumber;
     private String title;
     private String description;
     private Boolean isAnonymous;
     private Status status;
-    private Integer organizationalUnitId;
-    private Integer categoryId;
-    private Integer userId;
+    private Long organizationalUnitId;
+    private Long categoryId;
+    private Long userId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
