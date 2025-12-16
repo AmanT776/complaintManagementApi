@@ -2,35 +2,39 @@ package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*; // Using specific annotations
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Table(name = "permissions")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "roles", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
 @EntityListeners(AuditingEntityListener.class)
-public class Role {
+public class Permission {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false, length = 50)
+    @Column(nullable = false, unique = true, length = 100)
     private String name;
 
     @Column(length = 255)
     private String description;
 
+    @Column(length = 50)
+    private String category;
 
     @Column(nullable = false)
     private Boolean isActive = true;
+
 
     // Timestamps
     @Temporal(TemporalType.TIMESTAMP)
@@ -46,24 +50,11 @@ public class Role {
     @PreUpdate
     protected void onUpdate() { updatedAt = new Date(); }
 
-    // Relations
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "role_permissions",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id")
-    )
-    @Builder.Default
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private Set<Permission> permissions = new HashSet<>();
-
-    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    // Relationship
+    @ManyToMany(mappedBy = "permissions")
     @JsonIgnore
     @Builder.Default
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private Set<User> users = new HashSet<>();
-
-
+    @ToString.Exclude // stops recursion in toString
+    @EqualsAndHashCode.Exclude // stops recursion in equals and hashCode
+    private Set<Role> roles = new HashSet<>();
 }
