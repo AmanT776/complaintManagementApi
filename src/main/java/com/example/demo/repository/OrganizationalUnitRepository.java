@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface OrganizationalUnitRepository extends JpaRepository<OrganizationalUnit, Integer> {
+public interface OrganizationalUnitRepository extends JpaRepository<OrganizationalUnit, Long> {
 
     Optional<OrganizationalUnit> findByName(String name);
 
-    List<OrganizationalUnit> findByParentId(Integer parentId);
+    List<OrganizationalUnit> findByParentId(Long parentId);
 
-    List<OrganizationalUnit> findByUnitTypeId(Integer unitTypeId);
+    List<OrganizationalUnit> findByUnitTypeId(Long unitTypeId);
 
     boolean existsByName(String name);
 }

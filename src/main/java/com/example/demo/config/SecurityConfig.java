@@ -54,6 +54,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/users/exists/**").permitAll()
                         // Admin only endpoints
+                        .requestMatchers("/api/users").hasRole("ADMIN") // POST /api/users (createUser)
                         .requestMatchers("/api/users/*/reset-password").hasRole("ADMIN")
                         .requestMatchers("/api/users/*/activate").hasRole("ADMIN")
                         .requestMatchers("/api/users/*/deactivate").hasRole("ADMIN")
@@ -64,7 +65,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/organizational-unit/**").hasAnyRole("ADMIN", "STAFF")
                         // Authenticated user endpoints
                         .requestMatchers("/api/users/*/change-password").authenticated()
-                        .requestMatchers("/api/users").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers("/api/users/**").hasAnyRole("ADMIN", "STAFF") // GET requests
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

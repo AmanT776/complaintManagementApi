@@ -3,7 +3,9 @@ package com.example.demo.service.impl;
 import com.example.demo.dto.AuthResponseDto;
 import com.example.demo.dto.CreateUserDto;
 import com.example.demo.dto.LoginDto;
+import com.example.demo.dto.RegisterDto;
 import com.example.demo.dto.UserDto;
+import com.example.demo.mapper.UserMapper;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtUtils;
@@ -26,6 +28,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final UserMapper userMapper;
     private final JwtUtils jwtUtils;
 
     @Override
@@ -51,16 +54,16 @@ public class AuthServiceImpl implements AuthService {
         // Generate JWT token
         String jwt = jwtUtils.generateJwtToken(authentication);
 
-        // Convert user to DTO
-        UserDto userDto = userService.convertToDto(user);
+        // Convert user to DTO using mapper
+        UserDto userDto = userMapper.toDto(user);
 
         return new AuthResponseDto(jwt, userDto);
     }
 
     @Override
-    public UserDto register(CreateUserDto createUserDto) {
-        // For registration, we'll use the existing user service
-        return userService.createUser(createUserDto);
+    public UserDto register(RegisterDto registerDto) {
+        // Public registration always assigns "USER" role
+        return userService.registerUser(registerDto);
     }
 
     @Override
@@ -77,7 +80,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(userPrincipal.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return userService.convertToDto(user);
+        return userMapper.toDto(user);
     }
 
     @Override

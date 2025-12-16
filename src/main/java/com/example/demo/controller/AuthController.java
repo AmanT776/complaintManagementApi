@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.*;
+import com.example.demo.dto.RegisterDto;
 import com.example.demo.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<UserDto>> register(@Valid @RequestBody CreateUserDto createUserDto) {
-        UserDto user = authService.register(createUserDto);
+    public ResponseEntity<ApiResponse<UserDto>> register(@Valid @RequestBody RegisterDto registerDto) {
+        UserDto user = authService.register(registerDto);
         return new ResponseEntity<>(ApiResponse.success("User registered successfully", user), HttpStatus.CREATED);
     }
 

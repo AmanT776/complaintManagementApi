@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,8 +24,9 @@ public class UserController {
 
     private final UserService userService;
 
-    // Create a new user
+    // Create a new user (Admin only - allows role assignment)
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<UserDto>> createUser(@Valid @RequestBody CreateUserDto createUserDto) {
         UserDto createdUser = userService.createUser(createUserDto);
         return new ResponseEntity<>(ApiResponse.success("User created successfully", createdUser), HttpStatus.CREATED);
@@ -55,7 +57,7 @@ public class UserController {
 
     // Get user by ID
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Integer id) {
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         Optional<UserDto> user = userService.getUserById(id);
         return user.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -71,7 +73,7 @@ public class UserController {
 
     // Update user
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Integer id,
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id,
                                               @Valid @RequestBody UpdateUserDto updateUserDto) {
         try {
             UserDto updatedUser = userService.updateUser(id, updateUserDto);
@@ -83,7 +85,7 @@ public class UserController {
 
     // Delete user
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         try {
             userService.deleteUser(id);
             return ResponseEntity.noContent().build();
@@ -129,14 +131,14 @@ public class UserController {
 
     // Get users by organizational unit
     @GetMapping("/organizational-unit/{unitId}")
-    public ResponseEntity<List<UserDto>> getUsersByOrganizationalUnit(@PathVariable Integer unitId) {
+    public ResponseEntity<List<UserDto>> getUsersByOrganizationalUnit(@PathVariable Long unitId) {
         List<UserDto> users = userService.getUsersByOrganizationalUnit(unitId);
         return ResponseEntity.ok(users);
     }
 
     // Activate user
     @PatchMapping("/{id}/activate")
-    public ResponseEntity<UserDto> activateUser(@PathVariable Integer id) {
+    public ResponseEntity<UserDto> activateUser(@PathVariable Long id) {
         try {
             UserDto user = userService.activateUser(id);
             return ResponseEntity.ok(user);
@@ -147,7 +149,7 @@ public class UserController {
 
     // Deactivate user
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<UserDto> deactivateUser(@PathVariable Integer id) {
+    public ResponseEntity<UserDto> deactivateUser(@PathVariable Long id) {
         try {
             UserDto user = userService.deactivateUser(id);
             return ResponseEntity.ok(user);
@@ -172,7 +174,7 @@ public class UserController {
 
     // Change password
     @PatchMapping("/{id}/change-password")
-    public ResponseEntity<String> changePassword(@PathVariable Integer id,
+    public ResponseEntity<String> changePassword(@PathVariable Long id,
                                                  @Valid @RequestBody ChangePasswordDto changePasswordDto) {
         try {
             userService.changePassword(id, changePasswordDto);
@@ -184,7 +186,7 @@ public class UserController {
 
     // Reset password (Admin only)
     @PatchMapping("/{id}/reset-password")
-    public ResponseEntity<String> resetPassword(@PathVariable Integer id,
+    public ResponseEntity<String> resetPassword(@PathVariable Long id,
                                                 @RequestBody String newPassword) {
         try {
             userService.resetPassword(id, newPassword);

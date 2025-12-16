@@ -37,7 +37,7 @@ public class CreateUserDto {
     private String studentId;
 
     @NotNull(message = "Role ID is required")
-    private Integer roleId;
+    private Long roleId;
 
-    private Integer organizationalUnitId; // Optional, for staff members
+    private Long organizationalUnitId; // Optional, for staff members
 }

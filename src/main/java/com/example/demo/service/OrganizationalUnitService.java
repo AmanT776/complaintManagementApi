@@ -7,21 +7,21 @@ import java.util.Optional;
 
 public interface OrganizationalUnitService {
 
-    OrganizationalUnit createOrganizationalUnit(String name, Integer parentId, Integer unitTypeId);
+    OrganizationalUnit createOrganizationalUnit(String name, Long parentId, Long unitTypeId);
 
-    Optional<OrganizationalUnit> findById(Integer id);
+    Optional<OrganizationalUnit> findById(Long id);
 
     Optional<OrganizationalUnit> findByName(String name);
 
     List<OrganizationalUnit> findAll();
 
-    List<OrganizationalUnit> findByParentId(Integer parentId);
+    List<OrganizationalUnit> findByParentId(Long parentId);
 
-    List<OrganizationalUnit> findByUnitTypeId(Integer unitTypeId);
+    List<OrganizationalUnit> findByUnitTypeId(Long unitTypeId);
 
-    OrganizationalUnit updateOrganizationalUnit(Integer id, String name, Integer parentId, Integer unitTypeId);
+    OrganizationalUnit updateOrganizationalUnit(Long id, String name, Long parentId, Long unitTypeId);
 
-    void deleteOrganizationalUnit(Integer id);
+    void deleteOrganizationalUnit(Long id);
 
     boolean existsByName(String name);
 }

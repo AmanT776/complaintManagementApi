@@ -1,6 +1,8 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.*;
+import com.example.demo.dto.RegisterDto;
+import com.example.demo.mapper.UserMapper;
 import com.example.demo.model.OrganizationalUnit;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
@@ -28,6 +30,33 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
     private final OrganizationalUnitService organizationalUnitService;
+    private final UserMapper userMapper;
+
+    @Override
+    public UserDto registerUser(RegisterDto registerDto) {
+        // Validate email uniqueness
+        if (existsByEmail(registerDto.getEmail())) {
+            throw new RuntimeException("Email already exists: " + registerDto.getEmail());
+        }
+
+        // Validate student ID uniqueness if provided
+        if (registerDto.getStudentId() != null && existsByStudentId(registerDto.getStudentId())) {
+            throw new RuntimeException("Student ID already exists: " + registerDto.getStudentId());
+        }
+
+        // Get default USER role
+        Role userRole = roleService.findByName("USER")
+                .orElseThrow(() -> new RuntimeException("Default USER role not found. Please contact administrator."));
+
+        // Create user with default USER role using MapStruct
+        User user = userMapper.toEntity(registerDto);
+        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        user.setRole(userRole); // Always assign USER role for public registration
+        // organizationalUnit remains null for regular users
+
+        User savedUser = userRepository.save(user);
+        return userMapper.toDto(savedUser);
+    }
 
     @Override
     public UserDto createUser(CreateUserDto createUserDto) {
@@ -41,48 +70,55 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Student ID already exists: " + createUserDto.getStudentId());
         }
 
-        User user = convertToEntity(createUserDto);
+        User user = userMapper.toEntity(createUserDto);
         user.setPassword(passwordEncoder.encode(createUserDto.getPassword()));
 
+        // Set role
+        Role role = roleService.findById(createUserDto.getRoleId())
+                .orElseThrow(() -> new RuntimeException("Role not found with id: " + createUserDto.getRoleId()));
+        user.setRole(role);
+
+        // Set organizational unit if provided
+        if (createUserDto.getOrganizationalUnitId() != null) {
+            OrganizationalUnit unit = organizationalUnitService.findById(createUserDto.getOrganizationalUnitId())
+                    .orElseThrow(() -> new RuntimeException("Organizational unit not found with id: " + createUserDto.getOrganizationalUnitId()));
+            user.setOrganizationalUnit(unit);
+        }
+
         User savedUser = userRepository.save(user);
-        return convertToDto(savedUser);
+        return userMapper.toDto(savedUser);
     }
 
     @Override
-    public UserDto updateUser(Integer id, UpdateUserDto updateUserDto) {
+    public UserDto updateUser(Long id, UpdateUserDto updateUserDto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
-        // Update fields if provided
-        if (updateUserDto.getFirstName() != null) {
-            user.setFirstName(updateUserDto.getFirstName());
-        }
-        if (updateUserDto.getLastName() != null) {
-            user.setLastName(updateUserDto.getLastName());
-        }
+        // Validate email uniqueness if email is being changed
         if (updateUserDto.getEmail() != null && !updateUserDto.getEmail().equals(user.getEmail())) {
             if (existsByEmail(updateUserDto.getEmail())) {
                 throw new RuntimeException("Email already exists: " + updateUserDto.getEmail());
             }
-            user.setEmail(updateUserDto.getEmail());
         }
-        if (updateUserDto.getPhoneNumber() != null) {
-            user.setPhoneNumber(updateUserDto.getPhoneNumber());
-        }
+
+        // Validate student ID uniqueness if student ID is being changed
         if (updateUserDto.getStudentId() != null && !updateUserDto.getStudentId().equals(user.getStudentId())) {
             if (existsByStudentId(updateUserDto.getStudentId())) {
                 throw new RuntimeException("Student ID already exists: " + updateUserDto.getStudentId());
             }
-            user.setStudentId(updateUserDto.getStudentId());
         }
-        if (updateUserDto.getIsActive() != null) {
-            user.setIsActive(updateUserDto.getIsActive());
-        }
+
+        // Use mapper to update basic fields
+        userMapper.updateEntityFromDto(updateUserDto, user);
+
+        // Handle role update if provided
         if (updateUserDto.getRoleId() != null) {
             Role role = roleService.findById(updateUserDto.getRoleId())
                     .orElseThrow(() -> new RuntimeException("Role not found with id: " + updateUserDto.getRoleId()));
             user.setRole(role);
         }
+
+        // Handle organizational unit update if provided
         if (updateUserDto.getOrganizationalUnitId() != null) {
             OrganizationalUnit unit = organizationalUnitService.findById(updateUserDto.getOrganizationalUnitId())
                     .orElseThrow(() -> new RuntimeException("Organizational unit not found with id: " + updateUserDto.getOrganizationalUnitId()));
@@ -90,11 +126,11 @@ public class UserServiceImpl implements UserService {
         }
 
         User updatedUser = userRepository.save(user);
-        return convertToDto(updatedUser);
+        return userMapper.toDto(updatedUser);
     }
 
     @Override
-    public void deleteUser(Integer id) {
+    public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
             throw new RuntimeException("User not found with id: " + id);
         }
@@ -103,41 +139,41 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<UserDto> getUserById(Integer id) {
-        return userRepository.findById(id).map(this::convertToDto);
+    public Optional<UserDto> getUserById(Long id) {
+        return userRepository.findById(id).map(userMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<UserDto> getUserByEmail(String email) {
-        return userRepository.findByEmail(email).map(this::convertToDto);
+        return userRepository.findByEmail(email).map(userMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<UserDto> getAllUsers(Pageable pageable) {
-        return userRepository.findAll(pageable).map(this::convertToDto);
+        return userRepository.findAll(pageable).map(userMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<UserDto> searchUsers(String search, Pageable pageable) {
-        return userRepository.findBySearchTerm(search, pageable).map(this::convertToDto);
+        return userRepository.findBySearchTerm(search, pageable).map(userMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<UserDto> getUsersByRole(String roleName) {
         return userRepository.findByRoleName(roleName).stream()
-                .map(this::convertToDto)
+                .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -145,7 +181,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public List<UserDto> getActiveUsersByRole(String roleName) {
         return userRepository.findByRoleNameAndIsActive(roleName, true).stream()
-                .map(this::convertToDto)
+                .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -153,7 +189,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public List<UserDto> getAllAdmins() {
         return userRepository.findAllAdmins().stream()
-                .map(this::convertToDto)
+                .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -161,7 +197,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public List<UserDto> getAllStaff() {
         return userRepository.findAllStaff().stream()
-                .map(this::convertToDto)
+                .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -169,41 +205,41 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public List<UserDto> getAllRegularUsers() {
         return userRepository.findAllUsers().stream()
-                .map(this::convertToDto)
+                .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDto> getUsersByOrganizationalUnit(Integer unitId) {
+    public List<UserDto> getUsersByOrganizationalUnit(Long unitId) {
         return userRepository.findByOrganizationalUnitId(unitId).stream()
-                .map(this::convertToDto)
+                .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public UserDto activateUser(Integer id) {
+    public UserDto activateUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         user.setIsActive(true);
         User updatedUser = userRepository.save(user);
-        return convertToDto(updatedUser);
+        return userMapper.toDto(updatedUser);
     }
 
     @Override
-    public UserDto deactivateUser(Integer id) {
+    public UserDto deactivateUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         user.setIsActive(false);
         User updatedUser = userRepository.save(user);
-        return convertToDto(updatedUser);
+        return userMapper.toDto(updatedUser);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<UserDto> getActiveUsers() {
         return userRepository.findByIsActive(true).stream()
-                .map(this::convertToDto)
+                .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -211,12 +247,12 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public List<UserDto> getInactiveUsers() {
         return userRepository.findByIsActive(false).stream()
-                .map(this::convertToDto)
+                .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void changePassword(Integer userId, ChangePasswordDto changePasswordDto) {
+    public void changePassword(Long userId, ChangePasswordDto changePasswordDto) {
         if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getConfirmPassword())) {
             throw new RuntimeException("New password and confirm password do not match");
         }
@@ -233,7 +269,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void resetPassword(Integer userId, String newPassword) {
+    public void resetPassword(Long userId, String newPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
@@ -253,52 +289,5 @@ public class UserServiceImpl implements UserService {
         return studentId != null && userRepository.existsByStudentId(studentId);
     }
 
-    @Override
-    public UserDto convertToDto(User user) {
-        UserDto dto = new UserDto();
-        dto.setId(user.getId());
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setEmail(user.getEmail());
-        dto.setPhoneNumber(user.getPhoneNumber());
-        dto.setStudentId(user.getStudentId());
-        dto.setIsActive(user.getIsActive());
-        dto.setCreatedAt(user.getCreatedAt());
-        dto.setUpdatedAt(user.getUpdatedAt());
 
-        if (user.getRole() != null) {
-            dto.setRoleName(user.getRole().getName());
-        }
-
-        if (user.getOrganizationalUnit() != null) {
-            dto.setOrganizationalUnitName(user.getOrganizationalUnit().getName());
-        }
-
-        return dto;
-    }
-
-    @Override
-    public User convertToEntity(CreateUserDto createUserDto) {
-        User user = new User();
-        user.setFirstName(createUserDto.getFirstName());
-        user.setLastName(createUserDto.getLastName());
-        user.setEmail(createUserDto.getEmail());
-        user.setPhoneNumber(createUserDto.getPhoneNumber());
-        user.setStudentId(createUserDto.getStudentId());
-        user.setIsActive(true);
-
-        // Set role
-        Role role = roleService.findById(createUserDto.getRoleId())
-                .orElseThrow(() -> new RuntimeException("Role not found with id: " + createUserDto.getRoleId()));
-        user.setRole(role);
-
-        // Set organizational unit if provided
-        if (createUserDto.getOrganizationalUnitId() != null) {
-            OrganizationalUnit unit = organizationalUnitService.findById(createUserDto.getOrganizationalUnitId())
-                    .orElseThrow(() -> new RuntimeException("Organizational unit not found with id: " + createUserDto.getOrganizationalUnitId()));
-            user.setOrganizationalUnit(unit);
-        }
-
-        return user;
-    }
 }
