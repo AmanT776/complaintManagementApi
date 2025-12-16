@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.ApiResponse;
 import com.example.demo.dto.compliant.CompliantResponse;
 import com.example.demo.dto.compliant.CreateRequest;
+
 import com.example.demo.dto.compliant.UpdateRequest;
 import com.example.demo.dto.compliant.UpdateStatusRequest;
 import com.example.demo.service.compliant.CompliantService;
@@ -19,19 +20,14 @@ public class CompliantController {
     private CompliantService compliantService;
 
 
-      // CREATE COMPLAINT
-
     @PostMapping("/")
     public ApiResponse<CompliantResponse> createCompliant(
             @ModelAttribute CreateRequest createRequest) {
 
         CompliantResponse response = compliantService.createCompliant(createRequest);
-
         return new ApiResponse<>(true, "Complaint created successfully", response);
     }
 
-
-      // GET ALL COMPLAINTS
     @GetMapping("/")
     public ApiResponse<List<CompliantResponse>> getAllComplaints() {
 

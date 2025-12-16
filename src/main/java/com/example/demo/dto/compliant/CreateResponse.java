@@ -6,9 +6,9 @@ public class CreateResponse {
     private String title;
     private String description;
     private Boolean isAnonymous;
-    private long organizationalUnitId;
-    private long category;
-    private long user;
+    private Long organizationalUnitId;
+    private Long category;
+    private Long user;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

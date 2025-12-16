@@ -15,8 +15,8 @@ public class CreateRequest {
     private String title;
     private String description;
     private Boolean isAnonymous;
-    private long organizationalUnitId;
-    private long categoryId;
+    private Long organizationalUnitId;
+    private Long categoryId;
     private Long userId;
     private List<MultipartFile> files;
 
