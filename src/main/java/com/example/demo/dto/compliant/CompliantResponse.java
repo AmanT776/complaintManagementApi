@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompliantResponse {
-    private long id;
+    private Long id;
     private String referenceNumber;
     private String title;
     private String description;
