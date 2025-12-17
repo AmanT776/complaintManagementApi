@@ -34,9 +34,17 @@ public class User {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id",nullable = true)
     public List<Compliant> compliants = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organizational_unit_id")
+    private OrganizationalUnit organizationalUnit; // For staff members
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
 
 }
