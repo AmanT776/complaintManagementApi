@@ -5,8 +5,12 @@ import com.example.demo.model.OrganizationalUnitType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface OrganizationalUnitTypeRepository extends JpaRepository<OrganizationalUnitType, Long> {
-    // Basic checks needed for validation
+
+    Optional<OrganizationalUnitType> findByName(String name);
+
     boolean existsByName(String name);
 }

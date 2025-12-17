@@ -1,3 +1,4 @@
+
 package com.example.demo.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -30,3 +31,4 @@ public class Files {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 }
+

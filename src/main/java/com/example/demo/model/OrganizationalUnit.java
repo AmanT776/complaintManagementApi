@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -39,7 +40,10 @@ public class OrganizationalUnit {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "UNIT_TYPE_ID", nullable = false)
+    @JoinColumn(name="parent_id")
+    private OrganizationalUnit parent;
+    @ManyToOne
+    @JoinColumn(name = "unit_type_id",nullable = false)
     private OrganizationalUnitType unitType;
     // e.g., UNIVERSITY, FACULTY, DEPARTMENT, CENTER, DIRECTORATE
 
