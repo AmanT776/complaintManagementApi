@@ -15,27 +15,7 @@ import java.util.Optional;
 @Repository
 public interface CompliantRepository extends JpaRepository<Compliant, Long> {
     Optional<Compliant> findByReferenceNumber(String referenceNumber);
+    boolean existsByCategoryId(Long id);
 
-//    List<Compliant> findByUser(User user);
-//
-//    List<Compliant> findByUserId(Long userId);
-//
-//    //List<Compliant> findByStatus(Compliant.Status status);
-//
-//    List<Compliant> findByIsAnonymous(Boolean isAnonymous);
-//
-//    Optional<Compliant> findByReferenceNumber(String referenceNumber);
-//
-//    @Query("SELECT c FROM Compliant c WHERE " +
-//            "(:search IS NULL OR LOWER(c.title) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-//            "LOWER(c.description) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-//            "LOWER(c.referenceNumber) LIKE LOWER(CONCAT('%', :search, '%')))")
-//    Page<Compliant> findBySearchTerm(@Param("search") String search, Pageable pageable);
-//
-//    @Query("SELECT c FROM Compliant c WHERE c.user.id = :userId")
-//    Page<Compliant> findByUserId(@Param("userId") Long userId, Pageable pageable);
-//
-//    @Query("SELECT c FROM Compliant c WHERE c.status = :status")
-//    Page<Compliant> findByStatus(@Param("status") Compliant.Status status, Pageable pageable);
-//
+    List<Compliant> findByOrganizationalUnitId(Long organizationalunitId);
 }

@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+
 import com.example.demo.model.OrganizationalUnit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -10,11 +11,16 @@ import java.util.Optional;
 @Repository
 public interface OrganizationalUnitRepository extends JpaRepository<OrganizationalUnit, Long> {
 
-    Optional<OrganizationalUnit> findByName(String name);
+    boolean existsByName(String name);
 
-    List<OrganizationalUnit> findByParentId(Long parentId);
+    Optional<OrganizationalUnit> findByPublicId(String publicId);
 
+    // Get all units of a specific type (e.g., all Faculties)
     List<OrganizationalUnit> findByUnitTypeId(Long unitTypeId);
 
-    boolean existsByName(String name);
+    // Get all children of a specific parent (e.g., all Departments in a Faculty)
+    List<OrganizationalUnit> findByParentId(Long parentId);
+
+    // Find top-level units (e.g., University level)
+    List<OrganizationalUnit> findByParentIdIsNull();
 }

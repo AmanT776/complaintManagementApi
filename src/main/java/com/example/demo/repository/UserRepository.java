@@ -23,25 +23,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByRoleName(String roleName);
 
     List<User> findByIsActive(Boolean isActive);
-
-    @Query("SELECT u FROM User u WHERE u.role.name = :roleName AND u.isActive = :isActive")
-    List<User> findByRoleNameAndIsActive(@Param("roleName") String roleName, @Param("isActive") Boolean isActive);
-
-    @Query("SELECT u FROM User u WHERE u.organizationalUnit.id = :unitId")
-    List<User> findByOrganizationalUnitId(@Param("unitId") Long unitId);
-
-    @Query("SELECT u FROM User u WHERE " +
-            "(:search IS NULL OR LOWER(u.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-            "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-            "LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')))")
-    Page<User> findBySearchTerm(@Param("search") String search, Pageable pageable);
-
-    @Query("SELECT u FROM User u WHERE u.role.name = 'ADMIN'")
-    List<User> findAllAdmins();
-
-    @Query("SELECT u FROM User u WHERE u.role.name = 'STAFF'")
-    List<User> findAllStaff();
-
-    @Query("SELECT u FROM User u WHERE u.role.name = 'USER'")
-    List<User> findAllUsers();
+    boolean existsByRole_Id(Long id);
 }
+

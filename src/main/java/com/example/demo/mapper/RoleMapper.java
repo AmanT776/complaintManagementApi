@@ -1,24 +1,25 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.user.RoleDto;
+import com.example.demo.dto.role.RoleDTO;
 import com.example.demo.model.Role;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 
+import java.util.List;
+
+/**
+ * MapStruct mapper for Role <-> RoleDTO.
+ * componentModel = "spring" allows Spring to inject the mapper.
+ */
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
+    RoleDTO toDto(Role entity);
+    Role toEntity(RoleDTO dto);
 
-    RoleDto toDto(Role role);
+    // update existing entity from dto (used in update operations)
+    void updateEntityFromDto(RoleDTO dto, @MappingTarget Role entity);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "users", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    Role toEntity(RoleDto roleDto);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "users", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    void updateEntityFromDto(RoleDto roleDto, @MappingTarget Role role);
+    // convenience for lists
+    List<RoleDTO> toDtoList(List<Role> entities);
 }
+
