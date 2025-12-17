@@ -1,7 +1,6 @@
 package com.example.demo.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,7 +17,6 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class OrganizationalUnitType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
