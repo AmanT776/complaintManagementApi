@@ -17,9 +17,9 @@ public class CompliantResponse {
     private String description;
     private Boolean isAnonymous;
     private Status status;
-    private Long organizationalUnitId;
-    private Long categoryId;
-    private Long userId;
+    private Integer organizationalUnitId;
+    private Integer categoryId;
+    private Integer userId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import com.example.demo.enums.Status;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,11 +18,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Compliant {
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(name = "reference_number", length = 50)
     private String referenceNumber;
     @Column(nullable = false)

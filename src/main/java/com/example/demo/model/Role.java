@@ -3,10 +3,7 @@ package com.example.demo.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,6 +36,7 @@ public class Role {
 
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean isActive = true;
 
     // Timestamps

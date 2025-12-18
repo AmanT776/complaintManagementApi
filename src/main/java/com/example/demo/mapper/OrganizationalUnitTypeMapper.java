@@ -3,8 +3,9 @@ package com.example.demo.mapper;
 import com.example.demo.dto.user.OrganizationalUnitTypeDto;
 import com.example.demo.model.OrganizationalUnitType;
 import org.mapstruct.*;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface OrganizationalUnitTypeMapper {
 
     OrganizationalUnitTypeDto toDto(OrganizationalUnitType organizationalUnitType);

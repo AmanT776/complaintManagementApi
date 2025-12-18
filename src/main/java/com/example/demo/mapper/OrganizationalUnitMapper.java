@@ -6,8 +6,9 @@ import com.example.demo.model.OrganizationalUnit;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface OrganizationalUnitMapper {
 
     // Entity -> Response DTO
@@ -20,24 +21,17 @@ public interface OrganizationalUnitMapper {
     // Request DTO -> Entity (Creation)
     // We ignore complex associations here and set them in the Service layer
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "publicId", ignore = true)
     @Mapping(target = "unitType", ignore = true)
     @Mapping(target = "parent", ignore = true)
-    @Mapping(target = "children", ignore = true)
-    @Mapping(target = "users", ignore = true)
-    @Mapping(target = "complaints", ignore = true)
-    @Mapping(target = "createTime", ignore = true)
-    @Mapping(target = "updateTime", ignore = true)
-    @Mapping(source = "currentUserId", target = "createUserId")
-    @Mapping(source = "currentUserId", target = "updateUserId")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     OrganizationalUnit toEntity(OrganizationalUnitRequestDTO dto);
 
     // Request DTO -> Entity (Update)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "publicId", ignore = true)
     @Mapping(target = "unitType", ignore = true) // Handled in service if changed
     @Mapping(target = "parent", ignore = true)   // Handled in service if changed
-    @Mapping(target = "createUserId", ignore = true)
-    @Mapping(source = "currentUserId", target = "updateUserId")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     void updateEntityFromDto(OrganizationalUnitRequestDTO dto, @MappingTarget OrganizationalUnit entity);
 }
