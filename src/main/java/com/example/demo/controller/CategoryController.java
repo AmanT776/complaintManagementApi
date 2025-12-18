@@ -12,7 +12,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/org/categories")
+@RequestMapping("/api/v1/org/categories")
 @RequiredArgsConstructor
 public class CategoryController {
 

@@ -40,10 +40,7 @@ public class OrganizationalUnitTypeController {
     public ResponseEntity<OrganizationalUnitType> updateType(@PathVariable Long id, @Valid @RequestBody OrganizationalUnitType updates) {
         return repository.findById(id)
                 .map(existing -> {
-                    // Update only allowed fields
                     existing.setName(updates.getName());
-                    existing.setDescription(updates.getDescription());
-                    existing.setStatus(updates.getStatus());
                     return new ResponseEntity<>(repository.save(existing), HttpStatus.OK);
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Type not found"));

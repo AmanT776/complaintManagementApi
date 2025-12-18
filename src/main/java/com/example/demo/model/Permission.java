@@ -33,6 +33,7 @@ public class Permission {
     private String category;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean isActive = true;
 
 

@@ -5,10 +5,11 @@ import com.example.demo.dto.compliant.CreateRequest;
 import com.example.demo.model.Compliant;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CompliantMapper {
     @Mapping(target = "files", ignore = true)
     Compliant mapCompliantRequestToCompliant(CreateRequest createRequest);

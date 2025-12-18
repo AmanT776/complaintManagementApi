@@ -13,7 +13,7 @@ public interface OrganizationalUnitRepository extends JpaRepository<Organization
 
     boolean existsByName(String name);
 
-    Optional<OrganizationalUnit> findByPublicId(String publicId);
+    Optional<OrganizationalUnit> findByName(String name);
 
     // Get all units of a specific type (e.g., all Faculties)
     List<OrganizationalUnit> findByUnitTypeId(Long unitTypeId);

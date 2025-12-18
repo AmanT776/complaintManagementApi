@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Service("userRoleService")
 @RequiredArgsConstructor
 @Transactional
 public class RoleServiceImpl implements RoleService {
@@ -23,7 +23,11 @@ public class RoleServiceImpl implements RoleService {
             throw new RuntimeException("Role already exists with name: " + name);
         }
 
-        Role role = new Role(name, description);
+        Role role = Role.builder()
+                .name(name)
+                .description(description)
+                .isActive(true)
+                .build();
         return roleRepository.save(role);
     }
 

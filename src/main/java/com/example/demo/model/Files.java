@@ -1,4 +1,3 @@
-
 package com.example.demo.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -19,7 +18,7 @@ import java.time.LocalDateTime;
 public class Files {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     @Column(nullable = false,length = 255)
     private String file_path;
     @ManyToOne
@@ -31,4 +30,3 @@ public class Files {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 }
-
