@@ -72,8 +72,10 @@ public class OrganizationalUnitServiceImpl implements  OrganizationalUnitService
 
     // Get all units belonging to a specific type (e.g. "Get all Faculties")
     @Transactional(readOnly = true)
-    public List<OrganizationalUnitResponseDTO> getUnitsByType(Long typeId) {
-        return unitRepository.findByUnitTypeId(typeId).stream()
+    public List<OrganizationalUnitResponseDTO> getUnitsByType(String typeName) {
+        OrganizationalUnitType type = typeRepository.findByName(typeName)
+                .orElseThrow(() -> new EntityNotFoundException("Unit Type not found: " + typeName));
+        return unitRepository.findByName(typeName).stream()
                 .map(unitMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }

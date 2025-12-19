@@ -36,9 +36,9 @@ public class OrganizationalUnitController {
     }
 
     // e.g., GET /api/v1/units/type/1 (Returns all Faculties)
-    @GetMapping("/type/{typeId}")
-    public ResponseEntity<List<OrganizationalUnitResponseDTO>> getUnitsByType(@PathVariable Long typeId) {
-        return ResponseEntity.ok(unitService.getUnitsByType(typeId));
+    @GetMapping("/type/{typeName}")
+    public ResponseEntity<List<OrganizationalUnitResponseDTO>> getUnitsByType(@PathVariable String typeName) {
+        return ResponseEntity.ok(unitService.getUnitsByType(typeName));
     }
 
     // e.g., GET /api/v1/units/parent/5 (Returns all Depts in Faculty #5)

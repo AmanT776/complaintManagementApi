@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 @Data
 public class OrganizationalUnitResponseDTO {
     private Long id;
-    private String publicId;
     private String name;
     private String abbreviation;
 

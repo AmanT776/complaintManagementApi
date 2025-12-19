@@ -15,7 +15,7 @@ public interface OrganizationalUnitService {
 
     OrganizationalUnitResponseDTO getUnitById(Long id);
 
-    List<OrganizationalUnitResponseDTO> getUnitsByType(Long typeId);
+    List<OrganizationalUnitResponseDTO> getUnitsByType(String typeName);
 
     List<OrganizationalUnitResponseDTO> getUnitsByParent(Long parentId);
 
