@@ -1,13 +1,16 @@
 package com.example.demo.service.user.userserviceimpl;
 
+import com.example.demo.dto.organizationalUnit.OrganizationalUnitResponseDTO;
 import com.example.demo.dto.user.*;
+import com.example.demo.dto.role.RoleDTO; // Import RoleDTO
 import com.example.demo.mapper.UserMapper;
+import com.example.demo.mapper.RoleMapper; // Import RoleMapper
 import com.example.demo.model.OrganizationalUnit;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.service.user.OrganizationalUnitService;
-import com.example.demo.service.user.RoleService;
+import com.example.demo.service.organizationalUnit.OrganizationalUnitService;
+import com.example.demo.service.role.RoleService;
 import com.example.demo.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,28 +33,21 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
     private final OrganizationalUnitService organizationalUnitService;
     private final UserMapper userMapper;
+    private final RoleMapper roleMapper; // Added RoleMapper
 
     @Override
     public UserDto registerUser(RegisterDto registerDto) {
-        // Validate email uniqueness
         if (existsByEmail(registerDto.getEmail())) {
             throw new RuntimeException("Email already exists: " + registerDto.getEmail());
         }
 
-        // Validate student ID uniqueness if provided
-        if (registerDto.getStudentId() != null && existsByStudentId(registerDto.getStudentId())) {
-            throw new RuntimeException("Student ID already exists: " + registerDto.getStudentId());
-        }
+        // Wrap DTO from Service in Optional to use orElseThrow
+        RoleDTO roleDto = Optional.ofNullable(roleService.findByName("USER"))
+                .orElseThrow(() -> new RuntimeException("Default USER role not found."));
 
-        // Get default USER role
-        Role userRole = roleService.findByName("USER")
-                .orElseThrow(() -> new RuntimeException("Default USER role not found. Please contact administrator."));
-
-        // Create user with default USER role using MapStruct
         User user = userMapper.toEntity(registerDto);
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        user.setRole(userRole); // Always assign USER role for public registration
-        // organizationalUnit remains null for regular users
+        user.setRole(roleMapper.toEntity(roleDto)); // Convert DTO to Entity
 
         User savedUser = userRepository.save(user);
         return userMapper.toDto(savedUser);
@@ -59,28 +55,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(CreateUserDto createUserDto) {
-        // Validate email uniqueness
         if (existsByEmail(createUserDto.getEmail())) {
             throw new RuntimeException("Email already exists: " + createUserDto.getEmail());
-        }
-
-        // Validate student ID uniqueness if provided
-        if (createUserDto.getStudentId() != null && existsByStudentId(createUserDto.getStudentId())) {
-            throw new RuntimeException("Student ID already exists: " + createUserDto.getStudentId());
         }
 
         User user = userMapper.toEntity(createUserDto);
         user.setPassword(passwordEncoder.encode(createUserDto.getPassword()));
 
-        // Set role
-        Role role = roleService.findById(createUserDto.getRoleId())
+        // Fetch DTO and Map to Entity
+        RoleDTO roleDto = Optional.ofNullable(roleService.findById(createUserDto.getRoleId()))
                 .orElseThrow(() -> new RuntimeException("Role not found with id: " + createUserDto.getRoleId()));
-        user.setRole(role);
+        user.setRole(roleMapper.toEntity(roleDto));
 
-        // Set organizational unit if provided
         if (createUserDto.getOrganizationalUnitId() != null) {
-            OrganizationalUnit unit = organizationalUnitService.findById(createUserDto.getOrganizationalUnitId())
+            OrganizationalUnitResponseDTO unitDto = Optional.ofNullable(organizationalUnitService.getUnitById(createUserDto.getOrganizationalUnitId()))
                     .orElseThrow(() -> new RuntimeException("Organizational unit not found with id: " + createUserDto.getOrganizationalUnitId()));
+            OrganizationalUnit unit = new OrganizationalUnit();
+            unit.setId(unitDto.getId());
             user.setOrganizationalUnit(unit);
         }
 
@@ -93,39 +84,29 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
-        // Validate email uniqueness if email is being changed
         if (updateUserDto.getEmail() != null && !updateUserDto.getEmail().equals(user.getEmail())) {
             if (existsByEmail(updateUserDto.getEmail())) {
                 throw new RuntimeException("Email already exists: " + updateUserDto.getEmail());
             }
         }
 
-        // Validate student ID uniqueness if student ID is being changed
-        if (updateUserDto.getStudentId() != null && !updateUserDto.getStudentId().equals(user.getStudentId())) {
-            if (existsByStudentId(updateUserDto.getStudentId())) {
-                throw new RuntimeException("Student ID already exists: " + updateUserDto.getStudentId());
-            }
-        }
-
-        // Use mapper to update basic fields
         userMapper.updateEntityFromDto(updateUserDto, user);
 
-        // Handle role update if provided
         if (updateUserDto.getRoleId() != null) {
-            Role role = roleService.findById(updateUserDto.getRoleId())
+            RoleDTO roleDto = Optional.ofNullable(roleService.findById(updateUserDto.getRoleId()))
                     .orElseThrow(() -> new RuntimeException("Role not found with id: " + updateUserDto.getRoleId()));
-            user.setRole(role);
+            user.setRole(roleMapper.toEntity(roleDto));
         }
 
-        // Handle organizational unit update if provided
         if (updateUserDto.getOrganizationalUnitId() != null) {
-            OrganizationalUnit unit = organizationalUnitService.findById(updateUserDto.getOrganizationalUnitId())
+            OrganizationalUnitResponseDTO unitDto = Optional.ofNullable(organizationalUnitService.getUnitById(updateUserDto.getOrganizationalUnitId()))
                     .orElseThrow(() -> new RuntimeException("Organizational unit not found with id: " + updateUserDto.getOrganizationalUnitId()));
+            OrganizationalUnit unit = new OrganizationalUnit();
+            unit.setId(unitDto.getId());
             user.setOrganizationalUnit(unit);
         }
 
-        User updatedUser = userRepository.save(user);
-        return userMapper.toDto(updatedUser);
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
@@ -221,8 +202,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         user.setIsActive(true);
-        User updatedUser = userRepository.save(user);
-        return userMapper.toDto(updatedUser);
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
@@ -230,8 +210,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         user.setIsActive(false);
-        User updatedUser = userRepository.save(user);
-        return userMapper.toDto(updatedUser);
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
@@ -253,25 +232,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changePassword(Long userId, ChangePasswordDto changePasswordDto) {
         if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getConfirmPassword())) {
-            throw new RuntimeException("New password and confirm password do not match");
+            throw new RuntimeException("Passwords do not match");
         }
-
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-
+                .orElseThrow(() -> new RuntimeException("User not found"));
         if (!passwordEncoder.matches(changePasswordDto.getCurrentPassword(), user.getPassword())) {
-            throw new RuntimeException("Current password is incorrect");
+            throw new RuntimeException("Current password incorrect");
         }
-
         user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
         userRepository.save(user);
     }
 
     @Override
     public void resetPassword(Long userId, String newPassword) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-
+        User user = userRepository.findById(userId).orElseThrow();
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
@@ -287,6 +261,4 @@ public class UserServiceImpl implements UserService {
     public boolean existsByStudentId(String studentId) {
         return studentId != null && userRepository.existsByStudentId(studentId);
     }
-
-
 }

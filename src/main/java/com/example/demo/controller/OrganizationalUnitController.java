@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.organizationalUnit.OrganizationalUnitRequestDTO;
-import com.example.demo.dto.organizationalUnitType.OrganizationalUnitResponseDTO;
+import com.example.demo.dto.organizationalUnit.OrganizationalUnitResponseDTO;
 import com.example.demo.service.organizationalUnit.OrganizationalUnitService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

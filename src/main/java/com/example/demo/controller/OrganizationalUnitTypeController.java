@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.OrganizationalUnitType;
-import com.example.demo.repository.OrganizationalUnitTypeRepository;
+
+import com.example.demo.dto.organizationalUnitType.OrganizationalUnitTypeRequestDTO;
+import com.example.demo.dto.organizationalUnitType.OrganizationalUnitTypeResponseDTO;
+import com.example.demo.service.organizationalUnitTypeService.OrganizationalUnitTypeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,47 +14,45 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/unitTypes")
+@RequestMapping("/api/v1/unit-types")
 @RequiredArgsConstructor
 public class OrganizationalUnitTypeController {
 
-    private final OrganizationalUnitTypeRepository repository;
-
-
+    private final OrganizationalUnitTypeService unitTypeService;
 
     // CREATE
     @PostMapping
-    public ResponseEntity<OrganizationalUnitType> createType(@Valid @RequestBody OrganizationalUnitType unitType) {
-        if (repository.existsByName(unitType.getName())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Type name already exists");
-        }
-        return new ResponseEntity<>(repository.save(unitType), HttpStatus.CREATED);
+    public ResponseEntity<OrganizationalUnitTypeResponseDTO> createType(
+            @Valid @RequestBody OrganizationalUnitTypeRequestDTO requestDto) {
+        return new ResponseEntity<>(unitTypeService.createOrganizationalUnitType(requestDto), HttpStatus.CREATED);
+    }
+
+    // GET BY ID
+    @GetMapping("/{id}")
+    public ResponseEntity<OrganizationalUnitTypeResponseDTO> getTypeById(@PathVariable Long id) {
+        return unitTypeService.findByIdDto(id)
+                .map(type -> new ResponseEntity<>(type, HttpStatus.OK))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Type not found"));
     }
 
     // GET ALL
     @GetMapping
-    public List<OrganizationalUnitType> getAllTypes() {
-        return repository.findAll();
+    public List<OrganizationalUnitTypeResponseDTO> getAllTypes() {
+        return unitTypeService.findAllDto();
     }
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<OrganizationalUnitType> updateType(@PathVariable Long id, @Valid @RequestBody OrganizationalUnitType updates) {
-        return repository.findById(id)
-                .map(existing -> {
-                    existing.setName(updates.getName());
-                    return new ResponseEntity<>(repository.save(existing), HttpStatus.OK);
-                })
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Type not found"));
+    public ResponseEntity<OrganizationalUnitTypeResponseDTO> updateType(
+            @PathVariable Long id,
+            @Valid @RequestBody OrganizationalUnitTypeRequestDTO requestDto) {
+        return new ResponseEntity<>(unitTypeService.updateOrganizationalUnitType(id, requestDto), HttpStatus.OK);
     }
 
     // DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteType(@PathVariable Long id) {
-        if (!repository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Type not found");
-        }
-        repository.deleteById(id);
+        unitTypeService.deleteOrganizationalUnitType(id);
         return ResponseEntity.noContent().build();
     }
 }

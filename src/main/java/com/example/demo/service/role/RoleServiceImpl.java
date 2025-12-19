@@ -27,6 +27,24 @@ public class RoleServiceImpl implements RoleService {
     private final RoleMapper roleMapper;
 
 
+    //for admin,users,staff roles for users datainitializer will review later###
+    @Override
+    @Transactional
+    public RoleDTO create(String name, String description) {
+        String clean = name.trim();
+        if (roleRepository.existsByName(clean)) {
+            throw new DuplicateResourceException("Role with name '" + clean + "' already exists");
+        }
+
+        RoleDTO dto = new RoleDTO();
+        dto.setName(clean);
+        dto.setDescription(description);
+        dto.setIsActive(true); // default active on creation
+
+        Role saved = roleRepository.save(roleMapper.toEntity(dto));
+        return roleMapper.toDto(saved);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public List<RoleDTO> findAll() {
@@ -111,6 +129,8 @@ public class RoleServiceImpl implements RoleService {
     public List<RoleDTO> getInactiveRoles() {
         return roleMapper.toDtoList(roleRepository.findByIsActive(false));
     }
+
+
 
     @Override
     @Transactional

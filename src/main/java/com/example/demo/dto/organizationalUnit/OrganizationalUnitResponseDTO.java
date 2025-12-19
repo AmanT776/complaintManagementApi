@@ -1,4 +1,4 @@
-package com.example.demo.dto.organizationalUnitType;
+package com.example.demo.dto.organizationalUnit;
 
 import lombok.Data;
 

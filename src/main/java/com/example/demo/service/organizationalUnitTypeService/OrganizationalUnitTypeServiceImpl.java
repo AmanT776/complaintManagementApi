@@ -1,10 +1,11 @@
-package com.example.demo.service.user.userserviceimpl;
+package com.example.demo.service.organizationalUnitTypeService;
 
-import com.example.demo.dto.user.OrganizationalUnitTypeDto;
+
+import com.example.demo.dto.organizationalUnitType.OrganizationalUnitTypeRequestDTO;
+import com.example.demo.dto.organizationalUnitType.OrganizationalUnitTypeResponseDTO;
 import com.example.demo.mapper.OrganizationalUnitTypeMapper;
 import com.example.demo.model.OrganizationalUnitType;
 import com.example.demo.repository.OrganizationalUnitTypeRepository;
-import com.example.demo.service.user.OrganizationalUnitTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,41 +81,42 @@ public class OrganizationalUnitTypeServiceImpl implements OrganizationalUnitType
 
     // DTO methods
     @Override
-    public OrganizationalUnitTypeDto createOrganizationalUnitTypeDto(OrganizationalUnitTypeDto organizationalUnitTypeDto) {
-        if (existsByName(organizationalUnitTypeDto.getName())) {
-            throw new RuntimeException("Organizational unit type already exists with name: " + organizationalUnitTypeDto.getName());
+    public OrganizationalUnitTypeResponseDTO createOrganizationalUnitType(OrganizationalUnitTypeRequestDTO requestDto) {
+        if (existsByName(requestDto.getName())) {
+            throw new RuntimeException("Organizational unit type already exists with name: " + requestDto.getName());
         }
 
-        OrganizationalUnitType unitType = organizationalUnitTypeMapper.toEntity(organizationalUnitTypeDto);
+        OrganizationalUnitType unitType = organizationalUnitTypeMapper.toEntity(requestDto);
         OrganizationalUnitType savedUnitType = organizationalUnitTypeRepository.save(unitType);
-        return organizationalUnitTypeMapper.toDto(savedUnitType);
+        return organizationalUnitTypeMapper.toResponseDTO(savedUnitType);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<OrganizationalUnitTypeDto> findByIdDto(Long id) {
-        return organizationalUnitTypeRepository.findById(id).map(organizationalUnitTypeMapper::toDto);
+    public Optional<OrganizationalUnitTypeResponseDTO> findByIdDto(Long id) {
+        return organizationalUnitTypeRepository.findById(id)
+                .map(organizationalUnitTypeMapper::toResponseDTO);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrganizationalUnitTypeDto> findAllDto() {
+    public List<OrganizationalUnitTypeResponseDTO> findAllDto() {
         return organizationalUnitTypeRepository.findAll().stream()
-                .map(organizationalUnitTypeMapper::toDto)
+                .map(organizationalUnitTypeMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public OrganizationalUnitTypeDto updateOrganizationalUnitTypeDto(Long id, OrganizationalUnitTypeDto organizationalUnitTypeDto) {
+    public OrganizationalUnitTypeResponseDTO updateOrganizationalUnitType(Long id, OrganizationalUnitTypeRequestDTO requestDto) {
         OrganizationalUnitType unitType = organizationalUnitTypeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Organizational unit type not found with id: " + id));
 
-        if (!unitType.getName().equals(organizationalUnitTypeDto.getName()) && existsByName(organizationalUnitTypeDto.getName())) {
-            throw new RuntimeException("Organizational unit type already exists with name: " + organizationalUnitTypeDto.getName());
+        if (!unitType.getName().equals(requestDto.getName()) && existsByName(requestDto.getName())) {
+            throw new RuntimeException("Organizational unit type already exists with name: " + requestDto.getName());
         }
 
-        organizationalUnitTypeMapper.updateEntityFromDto(organizationalUnitTypeDto, unitType);
+        organizationalUnitTypeMapper.updateEntityFromDto(requestDto, unitType);
         OrganizationalUnitType updatedUnitType = organizationalUnitTypeRepository.save(unitType);
-        return organizationalUnitTypeMapper.toDto(updatedUnitType);
+        return organizationalUnitTypeMapper.toResponseDTO(updatedUnitType);
     }
 }

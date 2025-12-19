@@ -23,4 +23,6 @@ public interface RoleService {
     List<RoleDTO> getActiveRoles();
 
     List<RoleDTO> getInactiveRoles();
+    RoleDTO create(String name, String description);
+
 }

@@ -1,13 +1,16 @@
 package com.example.demo.cofig;
 
+import com.example.demo.dto.role.RoleDTO;
 import com.example.demo.dto.user.CreateUserDto;
 import com.example.demo.model.Role;
-import com.example.demo.service.user.RoleService;
+import com.example.demo.service.role.RoleService;
 import com.example.demo.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -27,19 +30,19 @@ public class DataInitializer implements CommandLineRunner {
         try {
             // Create ADMIN role
             if (!roleService.existsByName("ADMIN")) {
-                roleService.createRole("ADMIN", "System Administrator with full access");
+                roleService.create("ADMIN", "System Administrator with full access");
                 log.info("Created ADMIN role");
             }
 
             // Create STAFF role (Complaint Officers)
             if (!roleService.existsByName("STAFF")) {
-                roleService.createRole("STAFF", "Staff members who handle complaints");
+                roleService.create("STAFF", "Staff members who handle complaints");
                 log.info("Created STAFF role");
             }
 
             // Create USER role (Students and other complainants)
             if (!roleService.existsByName("USER")) {
-                roleService.createRole("USER", "Regular users who can submit complaints");
+                roleService.create("USER", "Regular users who can submit complaints");
                 log.info("Created USER role");
             }
 
@@ -53,7 +56,7 @@ public class DataInitializer implements CommandLineRunner {
             // Create default admin user if not exists
             String adminEmail = "admin@university.edu";
             if (!userService.existsByEmail(adminEmail)) {
-                Role adminRole = roleService.findByName("ADMIN")
+                RoleDTO adminRole = Optional.ofNullable(roleService.findByName("ADMIN"))
                         .orElseThrow(() -> new RuntimeException("ADMIN role not found"));
 
                 CreateUserDto adminDto = new CreateUserDto();
