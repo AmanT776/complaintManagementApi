@@ -22,7 +22,7 @@ public class OrganizationalUnit {
     private Long id;
     private String name;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="parent_id")
+    @JoinColumn(name="parent_id", nullable = true)
     private OrganizationalUnit parent;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "unit_type_id",nullable = false)

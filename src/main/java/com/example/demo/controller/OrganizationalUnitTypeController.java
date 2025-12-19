@@ -12,7 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/unit-types")
+@RequestMapping("/api/v1/unitTypes")
 @RequiredArgsConstructor
 public class OrganizationalUnitTypeController {
 

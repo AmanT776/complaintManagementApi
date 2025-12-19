@@ -23,7 +23,7 @@ public class CategoryController {
     @PreAuthorize("hasAuthority('CATEGORY_MANAGE')")
     public ResponseEntity<CategoryDTO> create(@Valid @RequestBody CategoryDTO dto) {
         CategoryDTO created = categoryService.create(dto);
-        return ResponseEntity.created(URI.create("/api/org/categories/" + created.getId())).body(created);
+        return ResponseEntity.created(URI.create("/api/org/categories/" + created.getName())).body(created);
     }
 
     // Viewing should be allowed for Users too (so they can select a category in the form)

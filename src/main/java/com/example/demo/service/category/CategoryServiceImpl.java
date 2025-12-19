@@ -64,7 +64,6 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDTO update(Long id, CategoryDTO dto) {
         Category existing = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFound("Category not found with id: " + id));
-
         String newName = dto.getName().trim();
         if (!existing.getName().equalsIgnoreCase(newName) && categoryRepository.existsByName(newName)) {
             throw new DuplicateResourceException("Category with name '" + newName + "' already exists");
