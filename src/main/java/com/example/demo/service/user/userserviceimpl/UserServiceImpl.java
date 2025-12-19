@@ -1,13 +1,17 @@
 package com.example.demo.service.user.userserviceimpl;
 
 import com.example.demo.dto.organizationalUnit.OrganizationalUnitResponseDTO;
+import com.example.demo.dto.role.RoleResponseDTO;
+import com.example.demo.dto.role.RoleRequestDTO;
+
 import com.example.demo.dto.user.*;
-import com.example.demo.dto.role.RoleDTO; // Import RoleDTO
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.mapper.RoleMapper; // Import RoleMapper
 import com.example.demo.model.OrganizationalUnit;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
+import com.example.demo.repository.OrganizationalUnitRepository;
+import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.organizationalUnit.OrganizationalUnitService;
 import com.example.demo.service.role.RoleService;
@@ -34,6 +38,8 @@ public class UserServiceImpl implements UserService {
     private final OrganizationalUnitService organizationalUnitService;
     private final UserMapper userMapper;
     private final RoleMapper roleMapper; // Added RoleMapper
+    private final RoleRepository roleRepository;
+    private final OrganizationalUnitRepository unitRepository;
 
     @Override
     public UserDto registerUser(RegisterDto registerDto) {
@@ -41,16 +47,16 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Email already exists: " + registerDto.getEmail());
         }
 
-        // Wrap DTO from Service in Optional to use orElseThrow
-        RoleDTO roleDto = Optional.ofNullable(roleService.findByName("USER"))
+        // Fetch the actual managed Entity from DB
+        Role role = roleRepository.findByName("USER")
                 .orElseThrow(() -> new RuntimeException("Default USER role not found."));
 
         User user = userMapper.toEntity(registerDto);
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        user.setRole(roleMapper.toEntity(roleDto)); // Convert DTO to Entity
+        user.setRole(role);
+        user.setIsActive(true);
 
-        User savedUser = userRepository.save(user);
-        return userMapper.toDto(savedUser);
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
@@ -62,21 +68,19 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toEntity(createUserDto);
         user.setPassword(passwordEncoder.encode(createUserDto.getPassword()));
 
-        // Fetch DTO and Map to Entity
-        RoleDTO roleDto = Optional.ofNullable(roleService.findById(createUserDto.getRoleId()))
+        // Handle Role Relationship
+        Role role = roleRepository.findById(createUserDto.getRoleId())
                 .orElseThrow(() -> new RuntimeException("Role not found with id: " + createUserDto.getRoleId()));
-        user.setRole(roleMapper.toEntity(roleDto));
+        user.setRole(role);
 
+        // Handle Org Unit Relationship
         if (createUserDto.getOrganizationalUnitId() != null) {
-            OrganizationalUnitResponseDTO unitDto = Optional.ofNullable(organizationalUnitService.getUnitById(createUserDto.getOrganizationalUnitId()))
-                    .orElseThrow(() -> new RuntimeException("Organizational unit not found with id: " + createUserDto.getOrganizationalUnitId()));
-            OrganizationalUnit unit = new OrganizationalUnit();
-            unit.setId(unitDto.getId());
+            OrganizationalUnit unit = unitRepository.findById(createUserDto.getOrganizationalUnitId())
+                    .orElseThrow(() -> new RuntimeException("Unit not found"));
             user.setOrganizationalUnit(unit);
         }
 
-        User savedUser = userRepository.save(user);
-        return userMapper.toDto(savedUser);
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
@@ -84,6 +88,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
+        // Logic for email uniqueness
         if (updateUserDto.getEmail() != null && !updateUserDto.getEmail().equals(user.getEmail())) {
             if (existsByEmail(updateUserDto.getEmail())) {
                 throw new RuntimeException("Email already exists: " + updateUserDto.getEmail());
@@ -93,16 +98,14 @@ public class UserServiceImpl implements UserService {
         userMapper.updateEntityFromDto(updateUserDto, user);
 
         if (updateUserDto.getRoleId() != null) {
-            RoleDTO roleDto = Optional.ofNullable(roleService.findById(updateUserDto.getRoleId()))
-                    .orElseThrow(() -> new RuntimeException("Role not found with id: " + updateUserDto.getRoleId()));
-            user.setRole(roleMapper.toEntity(roleDto));
+            Role role = roleRepository.findById(updateUserDto.getRoleId())
+                    .orElseThrow(() -> new RuntimeException("Role not found"));
+            user.setRole(role);
         }
 
         if (updateUserDto.getOrganizationalUnitId() != null) {
-            OrganizationalUnitResponseDTO unitDto = Optional.ofNullable(organizationalUnitService.getUnitById(updateUserDto.getOrganizationalUnitId()))
-                    .orElseThrow(() -> new RuntimeException("Organizational unit not found with id: " + updateUserDto.getOrganizationalUnitId()));
-            OrganizationalUnit unit = new OrganizationalUnit();
-            unit.setId(unitDto.getId());
+            OrganizationalUnit unit = unitRepository.findById(updateUserDto.getOrganizationalUnitId())
+                    .orElseThrow(() -> new RuntimeException("Unit not found"));
             user.setOrganizationalUnit(unit);
         }
 
@@ -112,7 +115,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new RuntimeException("User not found with id: " + id);
+            throw new RuntimeException("User not found");
         }
         userRepository.deleteById(id);
     }

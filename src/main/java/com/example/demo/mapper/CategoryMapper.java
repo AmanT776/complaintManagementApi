@@ -1,6 +1,7 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.category.CategoryDTO;
+import com.example.demo.dto.category.CategoryRequestDTO;
+import com.example.demo.dto.category.CategoryResponseDTO;
 import com.example.demo.model.Category;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -13,9 +14,9 @@ import java.util.List;
  */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CategoryMapper {
-    CategoryDTO toDto(Category entity);
-    Category toEntity(CategoryDTO dto);
-    void updateEntityFromDto(CategoryDTO dto, @MappingTarget Category entity);
-    List<CategoryDTO> toDtoList(List<Category> entities);
+    CategoryResponseDTO toDto(Category entity);
+    Category toEntity(CategoryRequestDTO dto);
+    void updateEntityFromDto(CategoryRequestDTO dto, @MappingTarget Category entity);
+    List<CategoryResponseDTO> toDtoList(List<Category> entities);
 }
 

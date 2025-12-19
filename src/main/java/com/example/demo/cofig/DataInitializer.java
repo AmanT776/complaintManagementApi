@@ -1,6 +1,6 @@
 package com.example.demo.cofig;
 
-import com.example.demo.dto.role.RoleDTO;
+import com.example.demo.dto.role.RoleResponseDTO;
 import com.example.demo.dto.user.CreateUserDto;
 import com.example.demo.model.Role;
 import com.example.demo.service.role.RoleService;
@@ -56,7 +56,7 @@ public class DataInitializer implements CommandLineRunner {
             // Create default admin user if not exists
             String adminEmail = "admin@university.edu";
             if (!userService.existsByEmail(adminEmail)) {
-                RoleDTO adminRole = Optional.ofNullable(roleService.findByName("ADMIN"))
+                RoleResponseDTO adminRole = Optional.ofNullable(roleService.findByName("ADMIN"))
                         .orElseThrow(() -> new RuntimeException("ADMIN role not found"));
 
                 CreateUserDto adminDto = new CreateUserDto();

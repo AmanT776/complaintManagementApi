@@ -1,22 +1,19 @@
 package com.example.demo.service.category;
 
-import com.example.demo.repository.CompliantRepository;
-import com.example.demo.dto.category.CategoryDTO;
+import com.example.demo.dto.category.CategoryRequestDTO;
+import com.example.demo.dto.category.CategoryResponseDTO;
 import com.example.demo.exception.DuplicateResourceException;
 import com.example.demo.exception.ResourceNotFound;
 import com.example.demo.mapper.CategoryMapper;
 import com.example.demo.model.Category;
 import com.example.demo.repository.CategoryRepository;
+import com.example.demo.repository.CompliantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * CategoryServiceImpl uses CategoryMapper for conversions.
- * Prevents deletion when complaints reference the category.
- */
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
@@ -27,13 +24,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CategoryDTO> findAll() {
+    public List<CategoryResponseDTO> findAll() {
         return categoryMapper.toDtoList(categoryRepository.findAll());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public CategoryDTO findById(Long id) {
+    public CategoryResponseDTO findById(Long id) {
         Category c = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFound("Category not found with id: " + id));
         return categoryMapper.toDto(c);
@@ -41,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public CategoryDTO findByName(String name) {
+    public CategoryResponseDTO findByName(String name) {
         Category c = categoryRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFound("Category not found with name: " + name));
         return categoryMapper.toDto(c);
@@ -49,65 +46,65 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public CategoryDTO create(CategoryDTO dto) {
+    public CategoryResponseDTO create(CategoryRequestDTO dto) {
         String clean = dto.getName().trim();
         if (categoryRepository.existsByName(clean)) {
             throw new DuplicateResourceException("Category with name '" + clean + "' already exists");
         }
-        dto.setName(clean);
-        Category saved = categoryRepository.save(categoryMapper.toEntity(dto));
+
+        Category category = categoryMapper.toEntity(dto);
+        category.setName(clean);
+        category.setIsActive(true); // Default to active
+
+        Category saved = categoryRepository.save(category);
         return categoryMapper.toDto(saved);
     }
 
     @Override
     @Transactional
-    public CategoryDTO update(Long id, CategoryDTO dto) {
+    public CategoryResponseDTO update(Long id, CategoryRequestDTO dto) {
         Category existing = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFound("Category not found with id: " + id));
+
         String newName = dto.getName().trim();
         if (!existing.getName().equalsIgnoreCase(newName) && categoryRepository.existsByName(newName)) {
             throw new DuplicateResourceException("Category with name '" + newName + "' already exists");
         }
 
-        dto.setName(newName);
         categoryMapper.updateEntityFromDto(dto, existing);
+        existing.setName(newName);
+
         Category saved = categoryRepository.save(existing);
         return categoryMapper.toDto(saved);
     }
 
     @Override
     @Transactional
-    public CategoryDTO activateCategory(Long id) {
+    public CategoryResponseDTO activateCategory(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFound("Category not found with id: " + id)); // Use ResourceNotFound()
+                .orElseThrow(() -> new ResourceNotFound("Category not found with id: " + id));
         category.setIsActive(true);
-        // Use categoryMapper.toDto and ensure the method is @Transactional
         return categoryMapper.toDto(categoryRepository.save(category));
     }
 
     @Override
     @Transactional
-    public CategoryDTO deactivateCategory(Long id) {
+    public CategoryResponseDTO deactivateCategory(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFound("Category not found with id: " + id)); // Use ResourceNotFound()
+                .orElseThrow(() -> new ResourceNotFound("Category not found with id: " + id));
         category.setIsActive(false);
-        // Use categoryMapper.toDto and ensure the method is @Transactional
         return categoryMapper.toDto(categoryRepository.save(category));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<CategoryDTO> getActiveCategories() { // Renamed to reflect Category domain
-        // Use categoryMapper.toDtoList for consistency
+    public List<CategoryResponseDTO> getActiveCategories() {
         return categoryMapper.toDtoList(categoryRepository.findByIsActive(true));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<CategoryDTO> getInactiveCategories() { // Renamed to reflect Category domain and return type
-        // The original code incorrectly referenced 'userRepository' and 'UserDto'.
-        // Assuming the intention was to return inactive *Categories* using *CategoryRepository*.
-        // Use categoryMapper.toDtoList for consistency
+    public List<CategoryResponseDTO> getInactiveCategories() {
         return categoryMapper.toDtoList(categoryRepository.findByIsActive(false));
     }
 
@@ -118,7 +115,7 @@ public class CategoryServiceImpl implements CategoryService {
             throw new ResourceNotFound("Category not found with id: " + id);
         }
         if (complaintRepository.existsByCategoryId(id)) {
-            throw new IllegalStateException("Cannot delete category with id " + id + " — complaints reference it");
+            throw new IllegalStateException("Cannot delete category — complaints reference it");
         }
         categoryRepository.deleteById(id);
     }
