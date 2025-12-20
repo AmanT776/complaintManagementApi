@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.dto.role.RoleRequestDTO;
 import com.example.demo.dto.role.RoleResponseDTO;
 import com.example.demo.service.role.RoleService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+@Tag(name = "Roles", description = "Role management APIs")
 @RestController
 @PreAuthorize("hasAuthority('ROLE_MANAGE')")
 @RequestMapping("/api/v1/roles")
@@ -36,6 +39,7 @@ public class RoleController {
         return ResponseEntity.ok(roleService.findAll());
     }
 
+    @Operation(summary = "Get Roles by ID", description = "Returns Role details based on ID")
     @GetMapping("/{id}")
     public ResponseEntity<RoleResponseDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(roleService.findById(id));

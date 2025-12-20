@@ -98,7 +98,7 @@ public class OrganizationalUnitServiceImpl implements  OrganizationalUnitService
             throw new IllegalArgumentException("Unit Name already taken.");
         }
 
-// 🚨 Prevent updating parent for the root unit
+//  Prevent updating parent for the root unit
         if (unit.getParent() == null && requestDTO.getParentId() != null) {
          throw new IllegalArgumentException("Root unit cannot be assigned a parent."); }
 
