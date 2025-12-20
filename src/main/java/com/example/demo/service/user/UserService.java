@@ -51,7 +51,8 @@ public interface UserService {
     List<UserDto> getActiveUsers();
 
     List<UserDto> getInactiveUsers();
-
+  // updat userprofile for all
+   UserDto updateProfile(Long id, ProfileUpdateDto profileUpdateDto);
     // Password management
     void changePassword(Long userId, ChangePasswordDto changePasswordDto);
 

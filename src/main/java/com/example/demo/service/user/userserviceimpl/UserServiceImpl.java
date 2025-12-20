@@ -250,6 +250,52 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+
+
+    @Override
+    public UserDto updateProfile(Long id, ProfileUpdateDto profileUpdateDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
+        // Validate email uniqueness if email is being changed
+        if (profileUpdateDto.getEmail() != null && !profileUpdateDto.getEmail().equals(user.getEmail())) {
+            if (existsByEmail(profileUpdateDto.getEmail())) {
+                throw new RuntimeException("Email already exists: " + profileUpdateDto.getEmail());
+            }
+        }
+
+        // Validate student ID uniqueness if student ID is being changed
+        if (profileUpdateDto.getStudentId() != null && !profileUpdateDto.getStudentId().equals(user.getStudentId())) {
+            if (existsByStudentId(profileUpdateDto.getStudentId())) {
+                throw new RuntimeException("Student ID already exists: " + profileUpdateDto.getStudentId());
+            }
+        }
+
+        // Update only safe fields (no role, org unit, or isActive)
+        if (profileUpdateDto.getFirstName() != null) {
+            user.setFirstName(profileUpdateDto.getFirstName());
+        }
+        if (profileUpdateDto.getLastName() != null) {
+            user.setLastName(profileUpdateDto.getLastName());
+        }
+        if (profileUpdateDto.getEmail() != null) {
+            user.setEmail(profileUpdateDto.getEmail());
+        }
+        if (profileUpdateDto.getPhoneNumber() != null) {
+            user.setPhoneNumber(profileUpdateDto.getPhoneNumber());
+        }
+        if (profileUpdateDto.getStudentId() != null) {
+            user.setStudentId(profileUpdateDto.getStudentId());
+        }
+
+        User updatedUser = userRepository.save(user);
+        return userMapper.toDto(updatedUser);
+    }
+
+
+
+
+
     @Override
     public void changePassword(Long userId, ChangePasswordDto changePasswordDto) {
         if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getConfirmPassword())) {
