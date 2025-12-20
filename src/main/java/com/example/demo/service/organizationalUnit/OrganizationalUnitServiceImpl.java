@@ -75,7 +75,7 @@ public class OrganizationalUnitServiceImpl implements  OrganizationalUnitService
     public List<OrganizationalUnitResponseDTO> getUnitsByType(String typeName) {
         OrganizationalUnitType type = typeRepository.findByName(typeName)
                 .orElseThrow(() -> new EntityNotFoundException("Unit Type not found: " + typeName));
-        return unitRepository.findByName(typeName).stream()
+        return unitRepository.findById(type.getId()).stream()
                 .map(unitMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -97,6 +97,10 @@ public class OrganizationalUnitServiceImpl implements  OrganizationalUnitService
         if (!unit.getName().equals(requestDTO.getName()) && unitRepository.existsByName(requestDTO.getName())) {
             throw new IllegalArgumentException("Unit Name already taken.");
         }
+
+// 🚨 Prevent updating parent for the root unit
+        if (unit.getParent() == null && requestDTO.getParentId() != null) {
+         throw new IllegalArgumentException("Root unit cannot be assigned a parent."); }
 
         // Update fields
         unitMapper.updateEntityFromDto(requestDTO, unit);
