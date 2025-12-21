@@ -3,11 +3,8 @@ package com.example.demo.dto.category;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-/**
- * Lightweight Category DTO — exposes only id + name.
- */
 @Data
-public class CategoryDTO {
+public class CategoryRequestDTO {
     @NotBlank(message = "Category name is required")
     private String name;
     private Boolean isActive;

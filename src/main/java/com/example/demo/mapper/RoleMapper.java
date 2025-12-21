@@ -1,6 +1,7 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.role.RoleDTO;
+import com.example.demo.dto.role.RoleRequestDTO;
+import com.example.demo.dto.role.RoleResponseDTO;
 import com.example.demo.model.Role;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -8,19 +9,16 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-/**
- * MapStruct mapper for Role <-> RoleDTO.
- * componentModel = "spring" allows Spring to inject the mapper.
- */
+
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RoleMapper {
-    RoleDTO toDto(Role entity);
-    Role toEntity(RoleDTO dto);
+    RoleResponseDTO toDto(Role role);
+    Role toEntity(RoleRequestDTO dto);
 
     // update existing entity from dto (used in update operations)
-    void updateEntityFromDto(RoleDTO dto, @MappingTarget Role entity);
+    void updateEntityFromDto(RoleRequestDTO dto, @MappingTarget Role entity);
 
     // convenience for lists
-    List<RoleDTO> toDtoList(List<Role> entities);
+    List<RoleResponseDTO> toDtoList(List<Role> roles);
 }
 

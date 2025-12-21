@@ -1,6 +1,7 @@
 package com.example.demo.service.category;
 
-import com.example.demo.dto.category.CategoryDTO;
+import com.example.demo.dto.category.CategoryRequestDTO;
+import com.example.demo.dto.category.CategoryResponseDTO;
 
 import java.util.List;
 
@@ -8,19 +9,20 @@ import java.util.List;
  * Service interface for Category operations.
  */
 public interface CategoryService {
-    List<CategoryDTO> findAll();
-    CategoryDTO findById(Long id);
-    CategoryDTO findByName(String name);
-    CategoryDTO create(CategoryDTO dto);
-    CategoryDTO update(Long id, CategoryDTO dto);
+    List<CategoryResponseDTO> findAll();
+    CategoryResponseDTO findById(Long id);
+    CategoryResponseDTO findByName(String name);
+//    CategoryResponseDTO getById( Long id);
+    CategoryResponseDTO create(CategoryRequestDTO dto);
+    CategoryResponseDTO update(Long id, CategoryRequestDTO dto);
     void delete(Long id);
     boolean existsByName(String name);
-    CategoryDTO activateCategory(Long id);
+    CategoryResponseDTO activateCategory(Long id);
 
-    CategoryDTO deactivateCategory(Long id);
+    CategoryResponseDTO deactivateCategory(Long id);
 
-    List<CategoryDTO> getActiveCategories();
+    List<CategoryResponseDTO> getActiveCategories();
 
-    List<CategoryDTO> getInactiveCategories();
+    List<CategoryResponseDTO> getInactiveCategories();
 }
 

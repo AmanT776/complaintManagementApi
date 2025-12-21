@@ -1,7 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.role.RoleDTO;
+import com.example.demo.dto.role.RoleRequestDTO;
+import com.example.demo.dto.role.RoleResponseDTO;
 import com.example.demo.service.role.RoleService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
-/**
- * Role REST controller. Returns DTOs and uses HTTP status codes properly.
- */
+@Tag(name = "Roles", description = "Role management APIs")
 @RestController
 @PreAuthorize("hasAuthority('ROLE_MANAGE')")
 @RequestMapping("/api/v1/roles")
@@ -24,8 +25,8 @@ public class RoleController {
     private final RoleService roleService;
 
     @PostMapping
-    public ResponseEntity<RoleDTO> create(@Valid @RequestBody RoleDTO dto) {
-        RoleDTO created = roleService.create(dto);
+    public ResponseEntity<RoleResponseDTO> create(@Valid @RequestBody RoleRequestDTO dto) {
+        RoleResponseDTO created = roleService.create(dto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(created.getId())
@@ -34,37 +35,38 @@ public class RoleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RoleDTO>> getAll() {
+    public ResponseEntity<List<RoleResponseDTO>> getAll() {
         return ResponseEntity.ok(roleService.findAll());
     }
 
+    @Operation(summary = "Get Roles by ID", description = "Returns Role details based on ID")
     @GetMapping("/{id}")
-    public ResponseEntity<RoleDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<RoleResponseDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(roleService.findById(id));
     }
 
     @GetMapping("/active")
-    public ResponseEntity<List<RoleDTO>> getActiveRoles() {
+    public ResponseEntity<List<RoleResponseDTO>> getActiveRoles() {
         return ResponseEntity.ok(roleService.getActiveRoles());
     }
 
     @GetMapping("/inactive")
-    public ResponseEntity<List<RoleDTO>> getInactiveRoles() {
+    public ResponseEntity<List<RoleResponseDTO>> getInactiveRoles() {
         return ResponseEntity.ok(roleService.getInactiveRoles());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RoleDTO> update(@PathVariable Long id, @Valid @RequestBody RoleDTO dto) {
+    public ResponseEntity<RoleResponseDTO> update(@PathVariable Long id, @Valid @RequestBody RoleRequestDTO dto) {
         return ResponseEntity.ok(roleService.update(id, dto));
     }
 
     @PatchMapping("/{id}/activate")
-    public ResponseEntity<RoleDTO> activateRole(@PathVariable Long id) {
+    public ResponseEntity<RoleResponseDTO> activateRole(@PathVariable Long id) {
         return ResponseEntity.ok(roleService.activateRole(id));
     }
 
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<RoleDTO> deactivateRole(@PathVariable Long id) {
+    public ResponseEntity<RoleResponseDTO> deactivateRole(@PathVariable Long id) {
         return ResponseEntity.ok(roleService.deactivateRole(id));
     }
 
@@ -74,4 +76,3 @@ public class RoleController {
         return ResponseEntity.noContent().build();
     }
 }
-

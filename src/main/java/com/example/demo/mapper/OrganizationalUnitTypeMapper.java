@@ -1,6 +1,8 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.user.OrganizationalUnitTypeDto;
+
+import com.example.demo.dto.organizationalUnitType.OrganizationalUnitTypeRequestDTO;
+import com.example.demo.dto.organizationalUnitType.OrganizationalUnitTypeResponseDTO;
 import com.example.demo.model.OrganizationalUnitType;
 import org.mapstruct.*;
 import org.mapstruct.ReportingPolicy;
@@ -8,16 +10,20 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface OrganizationalUnitTypeMapper {
 
-    OrganizationalUnitTypeDto toDto(OrganizationalUnitType organizationalUnitType);
+    OrganizationalUnitTypeResponseDTO toResponseDTO(OrganizationalUnitType unitType);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    OrganizationalUnitType toEntity(OrganizationalUnitTypeDto organizationalUnitTypeDto);
+    // Request DTO -> Entity (Creation)
+    @Mapping(target = "id", ignore = true)          // JPA will generate
+    @Mapping(target = "createdAt", ignore = true)   // handled in @PrePersist
+    @Mapping(target = "updatedAt", ignore = true)   // handled in @PreUpdate
+    OrganizationalUnitType toEntity(OrganizationalUnitTypeRequestDTO dto);
 
+    // Request DTO -> Entity (Update)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    void updateEntityFromDto(OrganizationalUnitTypeDto organizationalUnitTypeDto, @MappingTarget OrganizationalUnitType organizationalUnitType);
+    @Mapping(target = "id", ignore = true)          // don’t overwrite primary key
+    @Mapping(target = "createdAt", ignore = true)   // keep original creation time
+    @Mapping(target = "updatedAt", ignore = true)   // updated automatically
+    void updateEntityFromDto(OrganizationalUnitTypeRequestDTO dto, @MappingTarget OrganizationalUnitType entity);
+
 }
+

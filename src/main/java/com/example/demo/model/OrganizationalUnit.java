@@ -3,6 +3,7 @@ package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,20 @@ public class OrganizationalUnit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+    @Column(name = "ABBREVIATION")
+    private String abbreviation;
+
+    @Column(name = "UNIT_EMAIL", unique = true)
+    private String unitEmail;
+
+    @Column(name = "PHONE_NUMBER")
+    @Pattern(regexp = "^\\+251\\d{9}$", message = "Invalid phone number. Must start with +251.")
+    private String phoneNumber;
+    @Lob
+    @Column(name = "REMARKS")
+    private String remarks;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="parent_id", nullable = true)
     private OrganizationalUnit parent;
