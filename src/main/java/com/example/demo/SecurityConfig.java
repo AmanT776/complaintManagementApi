@@ -61,20 +61,20 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
                         // Public endpoints - auth endpoints
-                        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/users/exists/**").permitAll()
+                        .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/users/exists/**").permitAll()
                         // Admin only endpoints
-                        .requestMatchers("/api/admin/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/admin/users/**").hasRole("ADMIN")
                         // Profile endpoints - authenticated users can access their own profile
-                        .requestMatchers("/api/profile/me").authenticated()
-                        .requestMatchers("/api/profile/change-password").authenticated()
+                        .requestMatchers("/api/v1/profile/me").authenticated()
+                        .requestMatchers("/api/v1/profile/change-password").authenticated()
                         // Profile endpoints - staff and admin can view other users
-                        .requestMatchers("/api/profile/user/**").hasAnyRole("ADMIN", "STAFF")
-                        .requestMatchers("/api/profile/organizational-unit/**").hasAnyRole("ADMIN", "STAFF")
-                        .requestMatchers("/api/profile/staff").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers("/api/v1/profile/user/**").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers("/api/v1/profile/organizational-unit/**").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers("/api/v1/profile/staff").hasAnyRole("ADMIN", "STAFF")
                         // Public profile endpoints for validation
-                        .requestMatchers("/api/profile/exists/**").permitAll()
+                        .requestMatchers("/api/v1/profile/exists/**").permitAll()
                         // Swagger/OpenAPI endpoints
                         .requestMatchers(
                                 "/v3/api-docs/**",
