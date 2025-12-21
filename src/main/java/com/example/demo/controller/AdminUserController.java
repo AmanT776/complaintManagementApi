@@ -1,9 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.user.*;
+import com.example.demo.service.organizationalUnit.OrganizationalUnitServiceImpl;
+import com.example.demo.service.role.RoleServiceImpl;
 import com.example.demo.service.user.UserService;
-import com.example.demo.service.user.RoleService;
-import com.example.demo.service.user.OrganizationalUnitService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,15 +20,15 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/v1/admin")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminUserController {
 
     private final UserService userService;
-    private final RoleService roleService;
-    private final OrganizationalUnitService organizationalUnitService;
+    private final RoleServiceImpl roleService;
+    private final OrganizationalUnitServiceImpl organizationalUnitService;
 
     // User Management
     @PostMapping("/users")
