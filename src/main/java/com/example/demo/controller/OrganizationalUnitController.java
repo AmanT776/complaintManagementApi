@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ApiResponse;
 import com.example.demo.dto.organizationalUnit.OrganizationalUnitRequestDTO;
 import com.example.demo.dto.organizationalUnit.OrganizationalUnitResponseDTO;
 import com.example.demo.service.organizationalUnit.OrganizationalUnitService;
@@ -50,10 +51,9 @@ public class OrganizationalUnitController {
     }
 
     @Operation(summary = "Get units by parent", description = "Returns all organizational units under a specific parent unit")
-    // e.g., GET /api/v1/units/parent/5 (Returns all Depts in Faculty #5)
     @GetMapping("/parent/{parentId}")
-    public ResponseEntity<List<OrganizationalUnitResponseDTO>> getUnitsByParent(@PathVariable Long parentId) {
-        return ResponseEntity.ok(unitService.getUnitsByParent(parentId));
+    public ApiResponse<List<OrganizationalUnitResponseDTO>> getUnitsByParent(@PathVariable Long parentId) {
+        return new ApiResponse(true,"organizational units fetched succesfully",unitService.getUnitsByParent(parentId));
     }
 
     @Operation(summary = "Update organizational unit", description = "Updates an existing organizational unit")

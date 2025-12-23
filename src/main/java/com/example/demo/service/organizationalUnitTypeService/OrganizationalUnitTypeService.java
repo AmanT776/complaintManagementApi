@@ -1,6 +1,7 @@
 package com.example.demo.service.organizationalUnitTypeService;
 
 
+import com.example.demo.dto.ApiResponse;
 import com.example.demo.dto.organizationalUnitType.OrganizationalUnitTypeRequestDTO;
 import com.example.demo.dto.organizationalUnitType.OrganizationalUnitTypeResponseDTO;
 import com.example.demo.model.OrganizationalUnitType;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
         // Entity methods (for internal use)
         OrganizationalUnitType createOrganizationalUnitType(String name);
-        Optional<OrganizationalUnitType> findById(Long id);
+        OrganizationalUnitType findById(Long id);
         Optional<OrganizationalUnitType> findByName(String name);
         List<OrganizationalUnitType> findAll();
         OrganizationalUnitType updateOrganizationalUnitType(Long id, String name);
@@ -24,7 +25,7 @@ import java.util.Optional;
 
     // DTO methods (API use)
     OrganizationalUnitTypeResponseDTO createOrganizationalUnitType(OrganizationalUnitTypeRequestDTO dto);
-    Optional<OrganizationalUnitTypeResponseDTO> findByIdDto(Long id);
+    ApiResponse<Optional<OrganizationalUnitType>> findByIdDto(Long id);
     List<OrganizationalUnitTypeResponseDTO> findAllDto();
     OrganizationalUnitTypeResponseDTO updateOrganizationalUnitType(Long id, OrganizationalUnitTypeRequestDTO dto);
 }

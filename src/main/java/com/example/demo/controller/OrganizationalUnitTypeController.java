@@ -1,19 +1,20 @@
 package com.example.demo.controller;
 
 
+import com.example.demo.dto.ApiResponse;
 import com.example.demo.dto.organizationalUnitType.OrganizationalUnitTypeRequestDTO;
 import com.example.demo.dto.organizationalUnitType.OrganizationalUnitTypeResponseDTO;
+import com.example.demo.model.OrganizationalUnitType;
 import com.example.demo.service.organizationalUnitTypeService.OrganizationalUnitTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Tag(name = "Organizational Unit Types", description = "Organizational unit type management APIs")
 @RestController
@@ -25,17 +26,15 @@ public class OrganizationalUnitTypeController {
 
     @Operation(summary = "Create organizational unit type", description = "Creates a new organizational unit type")
     @PostMapping
-    public ResponseEntity<OrganizationalUnitTypeResponseDTO> createType(
-            @Valid @RequestBody OrganizationalUnitTypeRequestDTO requestDto) {
-        return new ResponseEntity<>(unitTypeService.createOrganizationalUnitType(requestDto), HttpStatus.CREATED);
+    public ApiResponse<OrganizationalUnitTypeResponseDTO> createType(@Valid @RequestBody OrganizationalUnitTypeRequestDTO requestDto) {
+        return new ApiResponse<>(true,"organizational unit type created successfully",unitTypeService.createOrganizationalUnitType(requestDto));
     }
 
     @Operation(summary = "Get organizational unit type by ID", description = "Returns organizational unit type details based on ID")
     @GetMapping("/{id}")
-    public ResponseEntity<OrganizationalUnitTypeResponseDTO> getTypeById(@PathVariable Long id) {
-        return unitTypeService.findByIdDto(id)
-                .map(type -> new ResponseEntity<>(type, HttpStatus.OK))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Type not found"));
+    public ApiResponse<ApiResponse<Optional<OrganizationalUnitType>>> getTypeById(@PathVariable Long id) {
+        ApiResponse<Optional<OrganizationalUnitType>> unit = unitTypeService.findByIdDto(id);
+        return new ApiResponse<>(true,"organizational unit type fetched successfully",unit);
     }
 
     @Operation(summary = "Get all organizational unit types", description = "Returns all organizational unit types")
@@ -46,16 +45,16 @@ public class OrganizationalUnitTypeController {
 
     @Operation(summary = "Update organizational unit type", description = "Updates an existing organizational unit type")
     @PutMapping("/{id}")
-    public ResponseEntity<OrganizationalUnitTypeResponseDTO> updateType(
+    public ApiResponse<OrganizationalUnitTypeResponseDTO> updateType(
             @PathVariable Long id,
             @Valid @RequestBody OrganizationalUnitTypeRequestDTO requestDto) {
-        return new ResponseEntity<>(unitTypeService.updateOrganizationalUnitType(id, requestDto), HttpStatus.OK);
+        return new ApiResponse<>(true,"unit Type updated successfully",unitTypeService.updateOrganizationalUnitType(id, requestDto));
     }
 
     @Operation(summary = "Delete organizational unit type", description = "Deletes an organizational unit type by ID")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteType(@PathVariable Long id) {
+    public ApiResponse<ResponseEntity<Object>> deleteType(@PathVariable Long id) {
         unitTypeService.deleteOrganizationalUnitType(id);
-        return ResponseEntity.noContent().build();
+        return new ApiResponse<>(true,"organizational unit type deleted successfully",ResponseEntity.noContent().build());
     }
 }

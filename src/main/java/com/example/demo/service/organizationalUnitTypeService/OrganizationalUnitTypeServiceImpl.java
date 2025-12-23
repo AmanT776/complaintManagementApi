@@ -1,11 +1,13 @@
 package com.example.demo.service.organizationalUnitTypeService;
 
 
+import com.example.demo.dto.ApiResponse;
 import com.example.demo.dto.organizationalUnitType.OrganizationalUnitTypeRequestDTO;
 import com.example.demo.dto.organizationalUnitType.OrganizationalUnitTypeResponseDTO;
 import com.example.demo.mapper.OrganizationalUnitTypeMapper;
 import com.example.demo.model.OrganizationalUnitType;
 import com.example.demo.repository.OrganizationalUnitTypeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,9 +38,14 @@ public class OrganizationalUnitTypeServiceImpl implements OrganizationalUnitType
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<OrganizationalUnitType> findById(Long id) {
-        return organizationalUnitTypeRepository.findById(id);
+    public OrganizationalUnitType findById(Long id) {
+        OrganizationalUnitType unit = organizationalUnitTypeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "OrganizationalUnitType not found with id: " + id
+                ));
+        return unit;
     }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -93,9 +100,8 @@ public class OrganizationalUnitTypeServiceImpl implements OrganizationalUnitType
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<OrganizationalUnitTypeResponseDTO> findByIdDto(Long id) {
-        return organizationalUnitTypeRepository.findById(id)
-                .map(organizationalUnitTypeMapper::toResponseDTO);
+    public ApiResponse<Optional<OrganizationalUnitType>> findByIdDto(Long id) {
+        return new ApiResponse<>(true,"unit type fetched successfully",organizationalUnitTypeRepository.findById(id));
     }
 
     @Override
