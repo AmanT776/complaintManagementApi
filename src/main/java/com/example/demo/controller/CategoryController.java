@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ApiResponse;
 import com.example.demo.dto.category.CategoryRequestDTO;
 import com.example.demo.dto.category.CategoryResponseDTO;
+import com.example.demo.model.Category;
 import com.example.demo.service.category.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,9 +34,9 @@ public class CategoryController {
 
     @Operation(summary = "Get all categories", description = "Returns all categories")
     @GetMapping
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<CategoryResponseDTO>> getAll() {
-        return ResponseEntity.ok(categoryService.findAll());
+    public ApiResponse<List<CategoryResponseDTO>> getAll() {
+        List<CategoryResponseDTO> categories = categoryService.findAll();
+        return new ApiResponse<>(true, "Categories fetched successfully", categories);
     }
 
     @Operation(summary = "Get category by ID", description = "Returns category details based on ID")

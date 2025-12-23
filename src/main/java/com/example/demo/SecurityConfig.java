@@ -4,6 +4,7 @@ import com.example.demo.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -64,6 +65,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/users/exists/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/v1/compliant/").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v1/compliant/{id}").permitAll()
                         // Admin only endpoints
                         .requestMatchers("/api/v1/admin/users/**").hasRole("ADMIN")
                         // Profile endpoints - authenticated users can access their own profile
@@ -73,6 +76,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/profile/user/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers("/api/v1/profile/organizational-unit/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers("/api/v1/profile/staff").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers(HttpMethod.GET,"/api/v1/org/categories").permitAll()
                         // Public profile endpoints for validation
                         .requestMatchers("/api/v1/profile/exists/**").permitAll()
                         // Swagger/OpenAPI endpoints
