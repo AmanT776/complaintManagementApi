@@ -78,6 +78,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/profile/staff").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers(HttpMethod.GET,"/api/v1/org/categories").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v1/units/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v1/org/categories/active").permitAll()
                         // Public profile endpoints for validation
                         .requestMatchers("/api/v1/profile/exists/**").permitAll()
                         // Swagger/OpenAPI endpoints
