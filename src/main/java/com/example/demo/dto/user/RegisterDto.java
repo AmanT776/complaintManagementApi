@@ -1,5 +1,6 @@
 package com.example.demo.dto.user;
 
+import com.example.demo.model.OrganizationalUnit;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -34,4 +35,6 @@ public class RegisterDto {
 
     @Size(max = 20, message = "Student ID must not exceed 20 characters")
     private String studentId;
+
+    private Long organzationalUnitId;
 }
