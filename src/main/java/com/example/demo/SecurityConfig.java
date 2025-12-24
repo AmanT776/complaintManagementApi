@@ -60,6 +60,26 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/users/exists/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/v1/compliant/").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v1/compliant/{id}").permitAll()
+                        .requestMatchers("/api/v1/admin/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/profile/me").authenticated()
+                        .requestMatchers("/api/v1/profile/change-password").authenticated()
+                        .requestMatchers("/api/v1/profile/user/**").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers("/api/v1/profile/organizational-unit/**").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers("/api/v1/profile/staff").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers(HttpMethod.GET,"/api/v1/org/categories").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v1/units/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v1/org/categories/active").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v1/compliant/reference/{referenceNumber}").permitAll()
+                        .requestMatchers("/api/v1/profile/exists/**").permitAll()
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

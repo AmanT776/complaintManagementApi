@@ -46,8 +46,6 @@ public class UserServiceImpl implements UserService {
         if (existsByEmail(registerDto.getEmail())) {
             throw new RuntimeException("Email already exists: " + registerDto.getEmail());
         }
-
-        // Fetch the actual managed Entity from DB
         Role role = roleRepository.findByName("USER")
                 .orElseThrow(() -> new RuntimeException("Default USER role not found."));
 
@@ -56,8 +54,16 @@ public class UserServiceImpl implements UserService {
         user.setRole(role);
         user.setIsActive(true);
 
+        if (registerDto.getOrganizationalUnitId() != null) {
+            OrganizationalUnit unit = unitRepository
+                    .findById(registerDto.getOrganizationalUnitId())
+                    .orElseThrow(() -> new RuntimeException("Organizational Unit not found"));
+            user.setOrganizationalUnit(unit);
+        }
+
         return userMapper.toDto(userRepository.save(user));
     }
+
 
     @Override
     public UserDto createUser(CreateUserDto createUserDto) {

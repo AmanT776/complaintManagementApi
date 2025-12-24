@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ApiResponse;
 import com.example.demo.dto.role.RoleRequestDTO;
 import com.example.demo.dto.role.RoleResponseDTO;
 import com.example.demo.service.role.RoleService;
@@ -25,49 +26,49 @@ public class RoleController {
     private final RoleService roleService;
 
     @PostMapping
-    public ResponseEntity<RoleResponseDTO> create(@Valid @RequestBody RoleRequestDTO dto) {
+    public ApiResponse<RoleResponseDTO> create(@Valid @RequestBody RoleRequestDTO dto) {
         RoleResponseDTO created = roleService.create(dto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(created.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(created);
+        return new ApiResponse<>(true,"role created successfully",created);
     }
 
     @GetMapping
-    public ResponseEntity<List<RoleResponseDTO>> getAll() {
-        return ResponseEntity.ok(roleService.findAll());
+    public ApiResponse<List<RoleResponseDTO>> getAll() {
+        return new ApiResponse<>(true,"roles fetched successfully",roleService.findAll());
     }
 
     @Operation(summary = "Get Roles by ID", description = "Returns Role details based on ID")
     @GetMapping("/{id}")
-    public ResponseEntity<RoleResponseDTO> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(roleService.findById(id));
+    public ApiResponse<RoleResponseDTO> getById(@PathVariable Long id) {
+        return new ApiResponse<>(true,"role fetched successsfully",roleService.findById(id));
     }
 
     @GetMapping("/active")
-    public ResponseEntity<List<RoleResponseDTO>> getActiveRoles() {
-        return ResponseEntity.ok(roleService.getActiveRoles());
+    public ApiResponse<List<RoleResponseDTO>> getActiveRoles() {
+        return new ApiResponse<>(true,"active roles fetched successfully",roleService.getActiveRoles());
     }
 
     @GetMapping("/inactive")
-    public ResponseEntity<List<RoleResponseDTO>> getInactiveRoles() {
-        return ResponseEntity.ok(roleService.getInactiveRoles());
+    public ApiResponse<List<RoleResponseDTO>> getInactiveRoles() {
+        return new ApiResponse<>(true,"inactive roles fetched successfully",roleService.getInactiveRoles());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RoleResponseDTO> update(@PathVariable Long id, @Valid @RequestBody RoleRequestDTO dto) {
-        return ResponseEntity.ok(roleService.update(id, dto));
+    public ApiResponse<RoleResponseDTO> update(@PathVariable Long id, @Valid @RequestBody RoleRequestDTO dto) {
+        return new ApiResponse<>(true,"role updated successfully",roleService.update(id, dto));
     }
 
     @PatchMapping("/{id}/activate")
-    public ResponseEntity<RoleResponseDTO> activateRole(@PathVariable Long id) {
-        return ResponseEntity.ok(roleService.activateRole(id));
+    public ApiResponse<RoleResponseDTO> activateRole(@PathVariable Long id) {
+        return new ApiResponse<>(true,"role updated successfully",roleService.activateRole(id));
     }
 
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<RoleResponseDTO> deactivateRole(@PathVariable Long id) {
-        return ResponseEntity.ok(roleService.deactivateRole(id));
+    public ApiResponse<RoleResponseDTO> deactivateRole(@PathVariable Long id) {
+        return new ApiResponse<>(true,"role deactivated successfully",roleService.deactivateRole(id));
     }
 
     @DeleteMapping("/{id}")
