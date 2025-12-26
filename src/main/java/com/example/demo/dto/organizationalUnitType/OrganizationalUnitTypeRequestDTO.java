@@ -6,6 +6,6 @@ import lombok.Data;
 public class OrganizationalUnitTypeRequestDTO {
     private String name;
     private String description;
-    private Integer status;
+//    private Integer status;
 
 }

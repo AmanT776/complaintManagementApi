@@ -23,6 +23,6 @@ public class OrganizationalUnitResponseDTO {
     private String phoneNumber;
 
     // Audit
-    private Integer status;
+//    private Integer status;
     private LocalDateTime createTime;
 }

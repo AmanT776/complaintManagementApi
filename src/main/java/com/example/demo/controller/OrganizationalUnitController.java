@@ -23,7 +23,6 @@ public class OrganizationalUnitController {
 
     private final OrganizationalUnitService unitService;
 
-
     @Operation(summary = "Create organizational unit", description = "Creates a new organizational unit")
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -44,7 +43,6 @@ public class OrganizationalUnitController {
     }
 
     @Operation(summary = "Get units by type", description = "Returns all organizational units of a specific type")
-    // e.g., GET /api/v1/units/type/1 (Returns all Faculties)
     @GetMapping("/type/{typeName}")
     public ApiResponse<List<OrganizationalUnitResponseDTO>> getUnitsByType(@PathVariable String typeName) {
         return new ApiResponse<>(true,"organizational units fetched successfully",unitService.getUnitsByType(typeName));
@@ -64,7 +62,6 @@ public class OrganizationalUnitController {
             @Valid @RequestBody OrganizationalUnitRequestDTO requestDTO) {
         return new ApiResponse<>(true,"organizational units fetched successfully",unitService.updateUnit(id, requestDTO));
     }
-
 
     @Operation(summary = "Delete organizational unit", description = "Deletes an organizational unit by ID")
     @DeleteMapping("/{id}")

@@ -39,8 +39,8 @@ public class OrganizationalUnitTypeController {
 
     @Operation(summary = "Get all organizational unit types", description = "Returns all organizational unit types")
     @GetMapping
-    public List<OrganizationalUnitTypeResponseDTO> getAllTypes() {
-        return unitTypeService.findAllDto();
+    public ResponseEntity<ApiResponse<List<OrganizationalUnitTypeResponseDTO>>> getAllTypes() {
+        return ResponseEntity.ok(new ApiResponse<>(true, "Unit Types retrieved successfully", unitTypeService.findAllDto()));
     }
 
     @Operation(summary = "Update organizational unit type", description = "Updates an existing organizational unit type")

@@ -13,7 +13,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -23,6 +23,10 @@ public class DataInitializer implements CommandLineRunner {
 
     private final RoleService roleService;
     private final UserService userService;
+    private final RoleRepository roleRepository;
+    private final OrganizationalUnitRepository unitRepository;
+    private final OrganizationalUnitTypeRepository typeRepository;
+    private final CategoryRepository categoryRepository;
 
 
     @Override
@@ -30,9 +34,17 @@ public class DataInitializer implements CommandLineRunner {
         log.info("Running DataInitializer...");
 
         initializeRoles();
+
+        // 2. Initialize Categories
+        initializeCategories();
+
+        // 3. Initialize Organization Structure
+        initializeOrganization();
+
+        // 4. Initialize Admin User (Requested Style)
         initializeDefaultAdmin();
 
-        log.info("✅ DataInitializer finished");
+        log.info("DataInitializer finished");
     }
 
 

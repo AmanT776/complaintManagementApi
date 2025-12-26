@@ -10,7 +10,7 @@ public class OrganizationalUnitTypeResponseDTO {
     private Long id;
     private String name;
     private String description;
-    private Integer status;
+//    private Integer status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
