@@ -18,7 +18,7 @@ public class UserDto {
     private String studentId;
     private Boolean isActive;
     private String roleName;
-    private String organizationalUnitName;
+    private Long organizationalUnitId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

@@ -1,11 +1,13 @@
 package com.example.demo.dto.compliant;
 
 import com.example.demo.enums.Status;
+import com.example.demo.model.Files;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,6 +22,7 @@ public class CompliantResponse {
     private Integer organizationalUnitId;
     private Integer categoryId;
     private Integer userId;
+    private List<Files> files;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

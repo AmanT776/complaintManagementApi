@@ -26,49 +26,48 @@ public class OrganizationalUnitController {
     @Operation(summary = "Create organizational unit", description = "Creates a new organizational unit")
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<OrganizationalUnitResponseDTO>> createUnit(@Valid @RequestBody OrganizationalUnitRequestDTO requestDTO) {
-        OrganizationalUnitResponseDTO created = unitService.createUnit(requestDTO);
-        return new ResponseEntity<>(new ApiResponse<>(true, "Organizational Unit created successfully", created), HttpStatus.CREATED);
+    public ApiResponse<OrganizationalUnitResponseDTO> createUnit(@Valid @RequestBody OrganizationalUnitRequestDTO requestDTO) {
+        return new ApiResponse<>(true,"organizational unit created successfully",unitService.createUnit(requestDTO));
     }
 
     @Operation(summary = "Get all organizational units", description = "Returns all organizational units")
     @GetMapping
-    public ResponseEntity<ApiResponse<List<OrganizationalUnitResponseDTO>>> getAllUnits() {
-        return ResponseEntity.ok(new ApiResponse<>(true, "All Units retrieved successfully", unitService.getAllUnits()));
+    public ApiResponse<List<OrganizationalUnitResponseDTO>> getAllUnits() {
+        return new ApiResponse<>(true,"organizational units fetched successfully",unitService.getAllUnits());
     }
 
     @Operation(summary = "Get organizational unit by ID", description = "Returns organizational unit details based on ID")
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<OrganizationalUnitResponseDTO>> getUnitById(@PathVariable Long id) {
-        return ResponseEntity.ok(new ApiResponse<>(true, "Unit retrieved successfully", unitService.getUnitById(id)));
+    public ApiResponse<OrganizationalUnitResponseDTO> getUnitById(@PathVariable Long id) {
+        return new ApiResponse<>(true,"organizational unit fetched successfully",unitService.getUnitById(id));
     }
 
     @Operation(summary = "Get units by type", description = "Returns all organizational units of a specific type")
     @GetMapping("/type/{typeName}")
-    public ResponseEntity<ApiResponse<List<OrganizationalUnitResponseDTO>>> getUnitsByType(@PathVariable String typeName) {
-        return ResponseEntity.ok(new ApiResponse<>(true, "Units retrieved successfully", unitService.getUnitsByType(typeName)));
+    public ApiResponse<List<OrganizationalUnitResponseDTO>> getUnitsByType(@PathVariable String typeName) {
+        return new ApiResponse<>(true,"organizational units fetched successfully",unitService.getUnitsByType(typeName));
     }
 
     @Operation(summary = "Get units by parent", description = "Returns all organizational units under a specific parent unit")
     @GetMapping("/parent/{parentId}")
-    public ResponseEntity<ApiResponse<List<OrganizationalUnitResponseDTO>>> getUnitsByParent(@PathVariable Long parentId) {
-        return ResponseEntity.ok(new ApiResponse<>(true, "Child units retrieved successfully", unitService.getUnitsByParent(parentId)));
+    public ApiResponse<List<OrganizationalUnitResponseDTO>> getUnitsByParent(@PathVariable Long parentId) {
+        return new ApiResponse(true,"organizational units fetched succesfully",unitService.getUnitsByParent(parentId));
     }
 
     @Operation(summary = "Update organizational unit", description = "Updates an existing organizational unit")
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<OrganizationalUnitResponseDTO>> updateUnit(
+    public ApiResponse<OrganizationalUnitResponseDTO> updateUnit(
             @PathVariable Long id,
             @Valid @RequestBody OrganizationalUnitRequestDTO requestDTO) {
-        return ResponseEntity.ok(new ApiResponse<>(true, "Unit updated successfully", unitService.updateUnit(id, requestDTO)));
+        return new ApiResponse<>(true,"organizational units fetched successfully",unitService.updateUnit(id, requestDTO));
     }
 
     @Operation(summary = "Delete organizational unit", description = "Deletes an organizational unit by ID")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> deleteUnit(@PathVariable Long id) {
+    public ApiResponse<ResponseEntity<Object>> deleteUnit(@PathVariable Long id) {
         unitService.deleteUnit(id);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Unit deleted successfully", null));
+        return new ApiResponse<>(true,"organizational unit deleted successfully",ResponseEntity.noContent().build());
     }
 }

@@ -4,9 +4,13 @@ package com.example.demo.dto.organizationalUnit;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrganizationalUnitRequestDTO {
 
     @NotBlank(message = "Unit Name is required")
@@ -27,7 +31,9 @@ public class OrganizationalUnitRequestDTO {
 
     private String remarks;
 
-//    private Integer status;
+    public OrganizationalUnitRequestDTO(String bit, Object o, int i, String mail, String s, String bitCampus) {
+    }
 
-    private Long currentUserId; // For auditing
+    public OrganizationalUnitRequestDTO(String bahirdarInstituteOfTechnology, String bit, Long unitTypeId, int i, String mail, String phoneNumber, String bitCampus) {
+    }
 }

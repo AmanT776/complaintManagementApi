@@ -1,5 +1,6 @@
 package com.example.demo.dto.user;
 
+import com.example.demo.model.OrganizationalUnit;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -12,26 +13,29 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RegisterDto {
 
-    @NotBlank(message = "First name is required")
-    @Size(max = 30, message = "First name must not exceed 30 characters")
+    @NotBlank
+    @Size(max = 30)
     private String firstName;
 
-    @NotBlank(message = "Last name is required")
-    @Size(max = 30, message = "Last name must not exceed 30 characters")
+    @NotBlank
+    @Size(max = 30)
     private String lastName;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
-    @Size(max = 50, message = "Email must not exceed 50 characters")
+    @NotBlank
+    @Email
+    @Size(max = 50)
     private String email;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, max = 255, message = "Password must be between 6 and 255 characters")
+    @NotBlank
+    @Size(min = 6, max = 255)
     private String password;
 
-    @Size(max = 20, message = "Phone number must not exceed 20 characters")
+    @Size(max = 20)
     private String phoneNumber;
 
-    @Size(max = 20, message = "Student ID must not exceed 20 characters")
+    @Size(max = 20)
     private String studentId;
+
+    // ✅ Correct field
+    private Long organizationalUnitId;
 }

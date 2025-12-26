@@ -33,7 +33,7 @@ public class CompliantController {
     @GetMapping("/")
     public ApiResponse<List<CompliantResponse>> getAllComplaints(){
         List<Compliant> complaints = compliantService.getAllComplaints();
-        List<CompliantResponse> responses = compliantMapper.mapCompliantsToResponses(complaints);
+        List<CompliantResponse> responses = compliantMapper.mapCompliantsToCompliantResponse(complaints);
         return new ApiResponse<>(true, "Complaints retrieved successfully", responses);
     }
 
@@ -43,12 +43,26 @@ public class CompliantController {
         CompliantResponse response = compliantMapper.mapCompliantToCompliantResponse(compliant);
         return new ApiResponse<>(true, "Complaint retrieved successfully", response);
     }
+    @GetMapping("/user/{userId}")
+    public ApiResponse<List<CompliantResponse>> getCompliantByUserId(@PathVariable Long userId){
+        List<Compliant> compliants = compliantService.getCompliantByUserId(userId);
+        List<CompliantResponse> response = compliantMapper
+                .mapCompliantsToCompliantResponse(compliants);
+        return new ApiResponse<>(true,"user compliants fetched successfully",response);
+    }
 
     @GetMapping("/reference/{referenceNumber}")
     public ApiResponse<CompliantResponse> getCompliantByReference(@PathVariable String referenceNumber){
         Compliant compliant = compliantService.getCompliantByReference(referenceNumber);
         CompliantResponse response = compliantMapper.mapCompliantToCompliantResponse(compliant);
         return new ApiResponse<>(true, "Complaint retrieved successfully", response);
+    }
+
+    @GetMapping("/org/{id}")
+    public ApiResponse<List<CompliantResponse>> getCompliantByOrg(@PathVariable Long id){
+        List<Compliant> compliants = compliantService.getCompliantByOrganizationalUnitId(id);
+        List<CompliantResponse> response = compliantMapper.mapCompliantsToCompliantResponse(compliants);
+        return new ApiResponse<>(true,"compliants fetched successfully",response);
     }
 
     @PutMapping("/{id}")

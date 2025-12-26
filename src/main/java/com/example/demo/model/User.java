@@ -37,7 +37,7 @@ public class User {
     private String phoneNumber;
 
     @Column(length = 20)
-    private String studentId; // For students only
+    private String studentId;
 
     @Column(nullable = false)
     private Boolean isActive = true;
