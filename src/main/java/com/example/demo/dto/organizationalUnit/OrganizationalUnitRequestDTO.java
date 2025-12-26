@@ -27,7 +27,7 @@ public class OrganizationalUnitRequestDTO {
 
     private String remarks;
 
-    private Integer status;
+//    private Integer status;
 
     private Long currentUserId; // For auditing
 }
