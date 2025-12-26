@@ -25,9 +25,9 @@ public class Compliant {
     private Long id;
     @Column(name = "reference_number", length = 50)
     private String referenceNumber;
-    @Column(nullable = false)
+    @Column(nullable = false,columnDefinition = "TEXT")
     private String title;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
     @Column(name = "is_anonymous", nullable = true,columnDefinition = "BOOLEAN")
     private Boolean isAnonymous;

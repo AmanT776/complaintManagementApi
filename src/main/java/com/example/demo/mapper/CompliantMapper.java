@@ -19,5 +19,5 @@ public interface CompliantMapper {
     @Mapping(target = "userId", source = "user.id")
     CompliantResponse mapCompliantToCompliantResponse(Compliant compliant);
 
-    List<CompliantResponse> mapCompliantsToResponses(List<Compliant> compliants);
+    List<CompliantResponse> mapCompliantsToCompliantResponse(List<Compliant> compliant);
 }

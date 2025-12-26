@@ -110,6 +110,12 @@ public class CompliantService implements ICompliantService {
                 .orElseThrow(() -> new RuntimeException("Complaint not found with reference: " + referenceNumber));
     }
 
+    public List<Compliant> getCompliantByUserId(Long id){
+       return compliantRepository.findByUserId(id);
+    }
+    public List<Compliant> getCompliantByOrganizationalUnitId(Long id){
+       return compliantRepository.findByOrganizationalUnitId(id);
+    }
 
     public Compliant updateStatus(Long id, com.example.demo.enums.Status status) {
         Compliant compliant = compliantRepository.findById(id)

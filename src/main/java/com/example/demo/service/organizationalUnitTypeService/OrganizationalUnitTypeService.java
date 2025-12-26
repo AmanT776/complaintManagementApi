@@ -18,7 +18,7 @@ import java.util.Optional;
         OrganizationalUnitType createOrganizationalUnitType(String name);
         OrganizationalUnitType findById(Long id);
         Optional<OrganizationalUnitType> findByName(String name);
-        List<OrganizationalUnitType> findAll();
+        ApiResponse<List<OrganizationalUnitType>> findAll();
         OrganizationalUnitType updateOrganizationalUnitType(Long id, String name);
         void deleteOrganizationalUnitType(Long id);
         boolean existsByName(String name);

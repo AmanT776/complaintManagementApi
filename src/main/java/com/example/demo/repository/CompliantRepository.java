@@ -13,4 +13,5 @@ public interface CompliantRepository extends JpaRepository<Compliant, Long> {
     boolean existsByCategoryId(Long id);
 
     List<Compliant> findByOrganizationalUnitId(Long organizationalunitId);
+    List<Compliant> findByUserId(Long userId);
 }

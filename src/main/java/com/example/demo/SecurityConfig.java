@@ -16,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class SecurityConfig {
@@ -23,6 +25,7 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CorsConfigurationSource corsConfigurationSource;
+
 
     // Constructor injection (recommended over @Autowired fields)
     public SecurityConfig(UserDetailsService userDetailsService,
@@ -51,35 +54,53 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                // Use your custom CorsConfigurationSource instead of withDefaults()
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register").permitAll()
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/users/exists/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/v1/compliant/").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/compliant/{id}").permitAll()
-                        .requestMatchers("/api/v1/admin/users/**").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/profile/me").authenticated()
-                        .requestMatchers("/api/v1/profile/change-password").authenticated()
-                        .requestMatchers("/api/v1/profile/user/**").hasAnyRole("ADMIN", "STAFF")
-                        .requestMatchers("/api/v1/profile/organizational-unit/**").hasAnyRole("ADMIN", "STAFF")
-                        .requestMatchers("/api/v1/profile/staff").hasAnyRole("ADMIN", "STAFF")
-                        .requestMatchers(HttpMethod.GET,"/api/v1/org/categories").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/units/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/org/categories/active").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/compliant/reference/{referenceNumber}").permitAll()
-                        .requestMatchers("/api/v1/profile/exists/**").permitAll()
+
+                        // ✅ PUBLIC ENDPOINTS FIRST
                         .requestMatchers(
+                                "/uploads/**",
+                                "/auth/**",
+                                "/public/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
+
+                        .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/users/exists/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/compliant/").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/compliant/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/org/categories").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/units/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/org/categories/active").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/compliant/reference/{referenceNumber}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/unit-types").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/me").permitAll()
+
+                        // 🔐 ROLE-BASED
+                        .requestMatchers(HttpMethod.GET, "/api/v1/compliant/{id}/status").hasRole("STAFF")
+                        .requestMatchers("/api/v1/admin/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/profile/user/**").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers("/api/v1/profile/organizational-unit/**").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers("/api/v1/profile/staff").hasAnyRole("ADMIN", "STAFF")
+
+                        // 🔒 AUTHENTICATED
+                        .requestMatchers(
+                                "/api/v1/profile/me",
+                                "/api/v1/profile/change-password"
+                        ).authenticated()
+
+                        // ✅ MUST BE LAST
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
@@ -87,4 +108,5 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }

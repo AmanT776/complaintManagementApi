@@ -10,7 +10,7 @@ import org.mapstruct.*;
 public interface UserMapper {
 
     @Mapping(source = "role.name", target = "roleName")
-    @Mapping(source = "organizationalUnit.name", target = "organizationalUnitName")
+    @Mapping(source = "organizationalUnit.id", target = "organizationalUnitId")
     UserDto toDto(User user);
 
     @Mapping(target = "id", ignore = true)

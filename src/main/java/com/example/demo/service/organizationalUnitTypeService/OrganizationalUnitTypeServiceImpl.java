@@ -55,8 +55,8 @@ public class OrganizationalUnitTypeServiceImpl implements OrganizationalUnitType
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrganizationalUnitType> findAll() {
-        return organizationalUnitTypeRepository.findAll();
+    public ApiResponse<List<OrganizationalUnitType>> findAll() {
+        return new ApiResponse<>(true,"unit types fetched successfully",organizationalUnitTypeRepository.findAll());
     }
 
     @Override

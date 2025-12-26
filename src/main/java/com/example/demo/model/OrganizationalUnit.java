@@ -21,6 +21,7 @@ public class OrganizationalUnit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(columnDefinition = "TEXT")
     private String name;
 
     @Column(name = "ABBREVIATION")
@@ -33,7 +34,7 @@ public class OrganizationalUnit {
     @Pattern(regexp = "^\\+251\\d{9}$", message = "Invalid phone number. Must start with +251.")
     private String phoneNumber;
     @Lob
-    @Column(name = "REMARKS")
+    @Column(name = "REMARKS" , columnDefinition = "TEXT")
     private String remarks;
 
     @ManyToOne(fetch = FetchType.LAZY)
